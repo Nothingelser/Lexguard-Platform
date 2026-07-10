@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Audit Trail — LexGuard{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> / Audit Trail
+</nav>
+{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">Administrative Audit Trail</h1>
+<p class="text-[var(--lg-muted)] text-sm mb-8">Immutable log of case registry actions for data integrity review.</p>
+
+<section class="lg-card overflow-hidden">
+  <table class="lg-table w-full">
+    <thead><tr>
+      <th>Timestamp</th>
+      {% if user.is_commander %}<th>Station</th>{% endif %}
+      <th>Officer</th>
+      <th>Action</th>
+      <th>Entity</th>
+      <th>Detail</th>
+    </tr></thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td class="text-xs text-[var(--lg-muted)] whitespace-nowrap">{{ log.created_at|date:"M d, Y H:i:s" }}</td>
+        {% if user.is_commander %}<td class="text-xs font-mono">{{ log.station.code }}</td>{% endif %}
+        <td class="text-sm">{% if log.user %}{{ log.user.badge_number }}{% else %}—{% endif %}</td>
+        <td><span class="badge badge-investigating capitalize">{{ log.action }}</span></td>
+        <td class="capitalize text-sm">{{ log.entity }}</td>
+        <td class="text-sm text-[var(--lg-muted)] max-w-xs truncate">{{ log.detail }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center py-10 text-[var(--lg-muted)]">No audit entries yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

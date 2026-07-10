@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Register Case - LexGuard{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> /
+  <a href="{% url 'cases:list' %}">Case Register</a> / Register
+</nav>
+{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Register New Case File</h1>
+
+<form method="post" class="space-y-6">
+  {% csrf_token %}
+
+  <div class="lg-card p-6">
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-4">Case Information</h2>
+    <div class="grid md:grid-cols-2 gap-4">
+      {% for field in form %}
+      <div class="{% if field.name == 'narrative' %}md:col-span-2{% endif %}">
+        <label class="block text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider mb-2">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<p class="lg-danger text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="lg-card p-6">
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-1">Modus Operandi Tag Matrix</h2>
+    <p class="text-xs text-[var(--lg-muted)] mb-4">Structured behavioral parameters for cross-precinct pattern matching.</p>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {% for field in mo_form %}
+      <div>
+        <label class="block text-xs font-medium text-[var(--lg-muted)] mb-2">{{ field.label }}</label>
+        {{ field }}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="flex gap-3">
+    <button type="submit" class="lg-btn lg-btn-primary">Submit Case File</button>
+    <a href="{% url 'cases:list' %}" class="lg-btn lg-btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

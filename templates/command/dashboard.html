@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}Regional Command - LexGuard{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> / Regional Command Console
+</nav>
+{% endblock %}
+{% block content %}
+<section class="lg-page-hero">
+  <div class="lg-page-hero-content">
+    <p class="lg-page-hero-kicker">Regional command</p>
+    <h1 class="lg-page-hero-title">{{ region_name }} Region Command Console</h1>
+    <p class="lg-page-hero-copy">{{ county_count }} counties &middot; {{ station_count }} precincts &middot; read-only regional analytics for command oversight and pressure mapping.</p>
+    <div class="lg-page-hero-actions">
+      <a href="{% url 'analytics:alerts' %}" class="lg-btn lg-btn-primary">
+        MO Alerts {% if alert_count %}<span class="lg-badge px-2 py-0.5 rounded-full text-xs">{{ alert_count }}</span>{% endif %}
+      </a>
+      <a href="{% url 'analytics:export_csv' %}" class="lg-btn lg-btn-secondary">Export CSV</a>
+      <a href="{% url 'analytics:export_excel' %}" class="lg-btn lg-btn-secondary">Export Excel</a>
+    </div>
+  </div>
+  <div class="lg-page-hero-aside">
+    <div class="lg-hero-aside-card">
+      <span>Command posture</span>
+      <strong>Read-only regional intelligence</strong>
+      <p>Command views patterns, escalations, and pressure without altering station-level records.</p>
+    </div>
+    <div class="lg-hero-aside-card">
+      <span>Coverage</span>
+      <strong>County-to-precinct visibility</strong>
+      <p>Every county and station is kept in one supervisory picture for response planning.</p>
+    </div>
+  </div>
+</section>
+
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="lg-stat-card" style="--stat-accent: #163e63">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Counties</p>
+    <p class="text-3xl font-bold mt-2">{{ county_count }}</p>
+  </div>
+  <div class="lg-stat-card" style="--stat-accent: #0f766e">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Connected Precincts</p>
+    <p class="text-3xl font-bold mt-2">{{ station_count }}</p>
+  </div>
+  <div class="lg-stat-card" style="--stat-accent: #475569">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Regional Case Load</p>
+    <p class="text-3xl font-bold mt-2">{{ total_cases }}</p>
+  </div>
+  <div class="lg-stat-card" style="--stat-accent: #b8860b">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Active Investigations</p>
+    <p class="text-3xl font-bold mt-2 lg-text-warn">{{ open_cases }}</p>
+  </div>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-6 mb-8">
+  <div class="lg-card p-5">
+    <div class="lg-section-banner">
+      <div class="lg-section-banner__title">County pressure mapping</div>
+    </div>
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-4">Crime Distribution by County</h2>
+    <canvas id="countyChart" height="220"></canvas>
+  </div>
+  <div class="lg-card p-5">
+    <div class="lg-section-banner">
+      <div class="lg-section-banner__title">Pattern concentration</div>
+    </div>
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-4">Sub-County Hotspot Intensity</h2>
+    <canvas id="subcountyChart" height="220"></canvas>
+  </div>
+</div>
+
+{% if top_alerts %}
+<section class="lg-card overflow-hidden mb-8 lg-table-wrap">
+  <div class="lg-card-header flex items-center justify-between">
+    <span>Cross-County MO Linkage Alerts</span>
+    <a href="{% url 'analytics:alerts' %}" class="lg-link normal-case tracking-normal text-xs">View all</a>
+  </div>
+  <table class="lg-table w-full">
+    <thead><tr><th>Score</th><th>Source</th><th>County</th><th>Linked Case</th><th>Target County</th></tr></thead>
+    <tbody>
+      {% for alert in top_alerts %}
+      <tr>
+        <td><span class="lg-match-score">{{ alert.score }}</span></td>
+        <td><a href="{% url 'cases:detail' alert.source.pk %}" class="lg-link">{{ alert.source.case_number }}</a></td>
+        <td class="text-sm">{{ alert.source.station.county }}</td>
+        <td><a href="{% url 'cases:detail' alert.target.pk %}" class="lg-link">{{ alert.target.case_number }}</a></td>
+        <td class="text-sm">{{ alert.target.station.county }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+{% if hotspots %}
+<section class="lg-card overflow-hidden mb-8 lg-table-wrap">
+  <div class="lg-card-header">Regional Geospatial Hotspots (County &middot; Sub-County)</div>
+  <table class="lg-table w-full">
+    <thead><tr><th>County</th><th>Sub-County</th><th>Category</th><th>Case Count</th></tr></thead>
+    <tbody>
+      {% for row in hotspots %}
+      <tr>
+        <td class="font-medium">{{ row.station__county }}</td>
+        <td>{{ row.station__sub_county|default:"Unspecified" }}</td>
+        <td class="capitalize">{{ row.crime_category }}</td>
+        <td>
+          <div class="flex items-center gap-2">
+            <div class="w-24 h-1.5 bg-[var(--lg-border)] rounded-full overflow-hidden">
+              <div class="h-full lg-bar-warn rounded-full" style="width: {% widthratio row.count max_hotspot 100 %}%"></div>
+            </div>
+            <span class="font-medium">{{ row.count }}</span>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+<section class="lg-card overflow-hidden lg-table-wrap">
+  <div class="lg-card-header">Precinct Performance by County</div>
+  <table class="lg-table w-full">
+    <thead><tr>
+      <th>Station</th><th>County</th><th>Sub-County</th><th>Open</th><th>Closed</th><th>Closure Rate</th><th>Avg Resolution</th>
+    </tr></thead>
+    <tbody>
+      {% for row in performance %}
+      <tr>
+        <td>
+          <span class="font-medium">{{ row.station.code }}</span>
+          <span class="block text-xs text-[var(--lg-muted)]">{{ row.station.name }}</span>
+        </td>
+        <td>{{ row.station.county }}</td>
+        <td class="text-sm text-[var(--lg-muted)]">{{ row.station.sub_county }}</td>
+        <td>{{ row.open }}</td>
+        <td>{{ row.closed }}</td>
+        <td>
+          <div class="flex items-center gap-2">
+            <div class="w-16 h-1.5 bg-[var(--lg-border)] rounded-full overflow-hidden">
+              <div class="h-full lg-bar-success rounded-full" style="width: {{ row.closure_rate }}%"></div>
+            </div>
+            <span>{{ row.closure_rate }}%</span>
+          </div>
+        </td>
+        <td>{{ row.avg_resolution }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center py-8 text-[var(--lg-muted)]">No performance records yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<script>
+  const countyData = {{ county_json|safe }};
+  const subcountyData = {{ subcounty_json|safe }};
+  if (Object.keys(countyData).length) {
+    Chart.defaults.color = '#64748b';
+    new Chart(document.getElementById('countyChart'), {
+      type: 'bar',
+      data: {
+        labels: Object.keys(countyData),
+        datasets: [{ data: Object.values(countyData), backgroundColor: ['#163e63','#0f766e','#b8860b','#475569','#94a3b8'] }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  }
+  if (Object.keys(subcountyData).length) {
+    Chart.defaults.color = '#64748b';
+    new Chart(document.getElementById('subcountyChart'), {
+      type: 'radar',
+      data: {
+        labels: Object.keys(subcountyData),
+        datasets: [{ data: Object.values(subcountyData), backgroundColor: 'rgba(22,62,99,0.18)', borderColor: '#163e63', pointBackgroundColor: '#b8860b' }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  }
+</script>
+{% endblock %}

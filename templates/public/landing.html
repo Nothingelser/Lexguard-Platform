@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}LexGuard | Coast Region Secure Network{% endblock %}
+
+{% block body %}
+<div class="lg-home-canvas">
+  <div class="lg-home-grid" aria-hidden="true"></div>
+  <div class="lg-home-glow lg-home-glow-a" aria-hidden="true"></div>
+  <div class="lg-home-glow lg-home-glow-b" aria-hidden="true"></div>
+
+  <div class="lg-home-shell">
+    <header class="lg-home-topbar">
+      <a href="{% url 'accounts:login' %}" class="lg-home-brand" aria-label="LexGuard home">
+        <img src="{% static 'images/Logo.jpg' %}" alt="Kenya Police emblem" class="lg-home-brand-mark">
+        <span class="lg-home-brand-text">
+          <strong>LexGuard</strong>
+          <em>Coast Region secure network</em>
+        </span>
+      </a>
+
+      <div class="lg-home-topbar-meta">
+        <span>Badge-authenticated access</span>
+        <a href="{% url 'accounts:login' %}" class="lg-home-topbar-link">Open access terminal</a>
+      </div>
+    </header>
+
+    <main class="lg-home-main">
+      <section class="lg-home-hero">
+        <div class="lg-home-copy">
+          <p class="lg-home-kicker">Public gateway</p>
+          <h1>One system for station work and regional command.</h1>
+          <p class="lg-home-lead">
+            LexGuard keeps case activity, command oversight, and security logs in one audited Coast Region workspace.
+          </p>
+
+          <div class="lg-home-actions">
+            <a href="{% url 'accounts:login' %}" class="lg-home-primary">Enter secure access</a>
+            <span class="lg-home-chip">Badge number login only</span>
+          </div>
+
+          <dl class="lg-home-facts" aria-label="Platform highlights">
+            <div>
+              <dt>Counties</dt>
+              <dd>6 connected jurisdictions</dd>
+            </div>
+            <div>
+              <dt>Access</dt>
+              <dd>Role-based routing</dd>
+            </div>
+            <div>
+              <dt>Audit</dt>
+              <dd>Every action logged</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="lg-home-art" aria-hidden="true">
+          <div class="lg-home-art-ring"></div>
+          <div class="lg-home-art-frame">
+            <img src="{% static 'images/Logo.jpg' %}" alt="" class="lg-home-emblem">
+          </div>
+          <div class="lg-home-label lg-home-label-a">Secure entry</div>
+          <div class="lg-home-label lg-home-label-b">Regional command</div>
+        </div>
+      </section>
+
+      <section class="lg-home-bands" aria-label="Key platform notes">
+        <div class="lg-home-band">
+          <p>Station work</p>
+          <strong>Built for officers handling live cases.</strong>
+        </div>
+        <div class="lg-home-band">
+          <p>Regional command</p>
+          <strong>Clear oversight without exposing station detail.</strong>
+        </div>
+        <div class="lg-home-band">
+          <p>Security posture</p>
+          <strong>Private access, forced password changes, full audit trail.</strong>
+        </div>
+      </section>
+    </main>
+
+    <footer class="lg-home-footer">
+      <span>LexGuard</span>
+      <span>Coast Region multi-county network</span>
+      <span>Badge-based access required</span>
+    </footer>
+  </div>
+</div>
+{% endblock %}

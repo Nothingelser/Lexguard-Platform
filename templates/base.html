@@ -1,0 +1,313 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}LexGuard{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <link rel="stylesheet" href="{% static 'css/lexguard.css' %}?v=20260710c">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen">
+  {% block body %}
+  <div class="lg-app-shell min-h-screen">
+    {% if user.is_authenticated %}
+    <div class="lg-sidebar-backdrop" data-sidebar-backdrop hidden></div>
+    <aside id="lg-sidebar" class="lg-sidebar hidden md:flex flex-col" aria-label="Primary">
+      <div class="lg-sidebar-shell">
+        <div class="lg-sidebar-brand">
+          <a href="{% url 'dashboard' %}" class="lg-sidebar-brand-link">
+            <img src="{% static 'images/Logo.jpg' %}" alt="Kenya Police" class="lg-sidebar-mark">
+            <div class="min-w-0">
+              <p class="lg-sidebar-eyebrow">LexGuard</p>
+              <p class="lg-sidebar-title">Coast Region Command Network</p>
+              <p class="lg-sidebar-subtitle">Secure operational workspace</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="lg-sidebar-status">
+          <div class="lg-sidebar-status-row">
+            <span class="lg-status-dot"></span>
+            <span>Session active</span>
+          </div>
+          <p class="lg-sidebar-status-copy">
+            {% if user.is_super_admin %}
+              System administration
+            {% elif user.is_commander %}
+              Regional oversight
+            {% else %}
+              Local station workspace
+            {% endif %}
+          </p>
+        </div>
+
+        <nav class="lg-sidebar-nav">
+          <div class="lg-sidebar-section">
+            <p class="lg-sidebar-section-title">Workspace</p>
+            <a href="{% url 'dashboard' %}" class="lg-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+              <span class="lg-nav-link__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 11.5 12 4l9 7.5M5 10v10h14V10"/></svg>
+              </span>
+              <span class="lg-nav-link__text">
+                <strong>Dashboard</strong>
+                <small>Current workspace</small>
+              </span>
+            </a>
+            <a href="{% url 'cases:list' %}" class="lg-nav-link {% if 'cases' in request.path and 'audit' not in request.path %}active{% endif %}">
+              <span class="lg-nav-link__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z"/></svg>
+              </span>
+              <span class="lg-nav-link__text">
+                <strong>Case Registry</strong>
+                <small>Open files and history</small>
+              </span>
+            </a>
+            <a href="{% url 'stations:registry' %}" class="lg-nav-link {% if 'stations' in request.path %}active{% endif %}">
+              <span class="lg-nav-link__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 20h16M7 20V8a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v12M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M10 11h1m2 0h1m-4 4h1m2 0h1"/></svg>
+              </span>
+              <span class="lg-nav-link__text">
+                <strong>Precinct Registry</strong>
+                <small>County and station map</small>
+              </span>
+            </a>
+            <a href="{% url 'suspects:search' %}" class="lg-nav-link {% if 'suspects' in request.path %}active{% endif %}">
+              <span class="lg-nav-link__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 0 0-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 0 1 5.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 0 1 9.288 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+              </span>
+              <span class="lg-nav-link__text">
+                <strong>Suspect Directory</strong>
+                <small>Identity and linkage</small>
+              </span>
+            </a>
+          </div>
+
+          {% if user.is_commander %}
+          <div class="lg-sidebar-section">
+            <p class="lg-sidebar-section-title">Command</p>
+            <a href="{% url 'cases:audit' %}" class="lg-nav-link {% if 'audit' in request.path %}active{% endif %}">
+              <span class="lg-nav-link__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
+              </span>
+              <span class="lg-nav-link__text">
+                <strong>Audit Trail</strong>
+                <small>Immutable history</small>
+              </span>
+            </a>
+            <a href="{% url 'command_dashboard' %}" class="lg-nav-link {% if 'command' in request.path and 'alerts' not in request.path %}active{% endif %}">
+              <span class="lg-nav-link__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2Zm0 0V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10m-6 0a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2m0 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2"/></svg>
+              </span>
+              <span class="lg-nav-link__text">
+                <strong>Regional Command</strong>
+                <small>Cross-county view</small>
+              </span>
+            </a>
+            <a href="{% url 'analytics:alerts' %}" class="lg-nav-link {% if 'alerts' in request.path %}active{% endif %}">
+              <span class="lg-nav-link__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/></svg>
+              </span>
+              <span class="lg-nav-link__text">
+                <strong>Cross-County Alerts</strong>
+                <small>Regional pressure signals</small>
+              </span>
+            </a>
+          </div>
+          {% endif %}
+        </nav>
+
+        <div class="lg-sidebar-footer">
+          <p class="lg-sidebar-section-title">Account controls</p>
+          <a href="{% url 'accounts:password_change' %}" class="lg-sidebar-user-action">Change password</a>
+          <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="lg-btn lg-btn-secondary w-full">Sign out</button>
+          </form>
+        </div>
+      </div>
+    </aside>
+    {% endif %}
+
+    <div class="lg-app-main flex-1 flex flex-col min-w-0">
+      {% if user.is_authenticated %}
+      <header class="lg-masthead">
+        <div class="lg-masthead-brand">
+          <img src="{% static 'images/Logo.jpg' %}" alt="Kenya Police" class="lg-masthead-mark">
+          <div class="min-w-0">
+            <p class="lg-masthead-kicker">LexGuard Secure Network</p>
+            <h1 class="lg-masthead-title">
+              {% if user.is_super_admin %}
+                System Administration Surface
+              {% elif user.is_commander %}
+                Regional Oversight Surface
+              {% else %}
+                Station Operations Surface
+              {% endif %}
+            </h1>
+          </div>
+        </div>
+      </header>
+
+      <header class="lg-mobile-header md:hidden border-b border-[var(--lg-border)] p-4 flex items-center justify-between bg-[var(--lg-panel)]">
+        <div class="flex items-center gap-3 min-w-0">
+          <img src="{% static 'images/Logo.jpg' %}" alt="Kenya Police" class="w-6 h-6 object-contain">
+          <div class="min-w-0">
+            <p class="font-semibold lg-link leading-none truncate">LexGuard</p>
+            <p class="text-[10px] text-[var(--lg-muted)] uppercase tracking-[0.28em] mt-1">Operational Access</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" class="lg-mobile-nav-toggle md:hidden" data-sidebar-toggle aria-expanded="false" aria-controls="lg-sidebar">
+            <span></span><span></span><span></span>
+          </button>
+          <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button class="text-xs lg-danger">Logout</button>
+          </form>
+        </div>
+      </header>
+
+      {% endif %}
+
+      <main class="lg-app-content flex-1">
+        <div class="lg-app-content-inner">
+          {% if user.is_authenticated %}
+          <div class="lg-workbench-shell">
+            <div class="lg-workbench-grid">
+              <section class="lg-workbench-stage">
+                <div class="lg-command-bar">
+                  <div class="min-w-0">
+                    <p class="lg-command-bar__label">Operational surface</p>
+                    <h2 class="lg-command-bar__title">
+                      {% if user.is_super_admin %}
+                        System administration and registry control
+                      {% elif user.is_commander %}
+                        Regional oversight and alert review
+                      {% else %}
+                        Station case work and local records
+                      {% endif %}
+                    </h2>
+                  </div>
+                  <div class="lg-command-bar__actions">
+                    <a href="{% url 'dashboard' %}" class="lg-command-pill {% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}">Overview</a>
+                    <a href="{% url 'cases:list' %}" class="lg-command-pill {% if 'cases' in request.path %}is-active{% endif %}">Cases</a>
+                    <a href="{% url 'stations:registry' %}" class="lg-command-pill {% if 'stations' in request.path %}is-active{% endif %}">Registry</a>
+                  </div>
+                </div>
+                {% block breadcrumbs %}{% endblock %}
+                {% if messages %}
+                  <div class="mb-5 space-y-2">
+                    {% for message in messages %}
+                      <p class="lg-card px-4 py-3 text-sm" style="border-color: var(--lg-border);">{{ message }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                {% block content %}{% endblock %}
+              </section>
+
+              <aside class="lg-workbench-rail" aria-label="Operational summary">
+                <section class="lg-rail-card">
+                  <p class="lg-rail-kicker">Current posture</p>
+                  <h3 class="lg-rail-title">
+                    {% if user.is_super_admin %}
+                      Platform administration
+                    {% elif user.is_commander %}
+                      Regional command desk
+                    {% else %}
+                      Station workspace
+                    {% endif %}
+                  </h3>
+                  <p class="lg-rail-copy">
+                    {% if user.is_super_admin %}
+                      Oversees users, stations, and system recovery from a secure control surface.
+                    {% elif user.is_commander %}
+                      Reviews regional signals, escalation paths, and performance across the Coast Region.
+                    {% else %}
+                      Handles cases, suspects, and precinct records tied to the assigned station.
+                    {% endif %}
+                  </p>
+                </section>
+
+                <section class="lg-rail-card">
+                  <p class="lg-rail-kicker">Session details</p>
+                  <dl class="lg-rail-dl">
+                    <div>
+                      <dt>Badge</dt>
+                      <dd>{{ user.badge_number }}</dd>
+                    </div>
+                    <div>
+                      <dt>Role</dt>
+                      <dd>{{ user.get_role_display }}</dd>
+                    </div>
+                    {% if user.station %}
+                    <div>
+                      <dt>Station</dt>
+                      <dd>{{ user.station.code }}</dd>
+                    </div>
+                    {% endif %}
+                  </dl>
+                </section>
+              </aside>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </main>
+
+      {% if user.is_authenticated %}
+      <footer class="lg-footer px-8 py-4 text-center">
+        LexGuard Platform &middot; Coast Region multi-county network &middot; Secure tenant isolation active
+      </footer>
+      {% endif %}
+    </div>
+  </div>
+  {% endblock %}
+  <button id="theme-toggle" aria-label="Toggle theme" class="fixed bottom-6 right-6 z-50 bg-[var(--lg-panel)] p-3 rounded-full shadow-lg border border-[var(--lg-border)]"></button>
+  <script src="{% static 'js/theme-toggle.js' %}?v=20260710b"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const sidebar = document.getElementById("lg-sidebar");
+      const toggle = document.querySelector("[data-sidebar-toggle]");
+      const backdrop = document.querySelector("[data-sidebar-backdrop]");
+      if (!sidebar || !toggle || !backdrop) return;
+
+      const closeSidebar = () => {
+        document.body.classList.remove("sidebar-open");
+        sidebar.classList.remove("is-open");
+        backdrop.hidden = true;
+        toggle.setAttribute("aria-expanded", "false");
+      };
+
+      const openSidebar = () => {
+        document.body.classList.add("sidebar-open");
+        sidebar.classList.add("is-open");
+        backdrop.hidden = false;
+        toggle.setAttribute("aria-expanded", "true");
+      };
+
+      toggle.addEventListener("click", () => {
+        if (document.body.classList.contains("sidebar-open")) {
+          closeSidebar();
+        } else {
+          openSidebar();
+        }
+      });
+
+      backdrop.addEventListener("click", closeSidebar);
+      sidebar.querySelectorAll("a, button").forEach((node) => {
+        node.addEventListener("click", () => {
+          if (window.matchMedia("(max-width: 767px)").matches) {
+            closeSidebar();
+          }
+        });
+      });
+      window.addEventListener("resize", () => {
+        if (!window.matchMedia("(max-width: 767px)").matches) closeSidebar();
+      });
+    });
+  </script>
+</body>
+</html>

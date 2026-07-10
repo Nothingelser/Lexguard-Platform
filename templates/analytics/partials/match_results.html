@@ -1,0 +1,27 @@
+<div class="lg-card overflow-hidden">
+  <div class="lg-card-header">Matched Cases (Cross-Station)</div>
+  <table class="lg-table w-full">
+    <thead><tr>
+      <th>Match Score</th>
+      <th>Case #</th>
+      <th>Station</th>
+      <th>County</th>
+      <th>Title</th>
+      <th></th>
+    </tr></thead>
+    <tbody>
+      {% for match in matches %}
+      <tr>
+        <td><span class="lg-match-score">{{ match.score }}</span></td>
+        <td class="font-medium">{{ match.case.case_number }}</td>
+        <td class="font-mono text-xs">{{ match.case.station.code }}</td>
+        <td class="text-sm">{{ match.case.station.county }}</td>
+        <td class="max-w-xs truncate">{{ match.case.title }}</td>
+        <td><a href="{% url 'cases:detail' match.case.pk %}" class="lg-link text-xs hover:underline">View</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center py-10 text-[var(--lg-muted)]">No cross-precinct matches above the similarity threshold.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,54 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="module">
+  <h1>Personnel Control</h1>
+  <p>Provision officer or commander accounts and lock compromised users from a single internal screen.</p>
+</div>
+
+<div class="module">
+  <h2>Provision Officer</h2>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="provision_officer" value="1">
+    <fieldset class="module aligned">
+      {{ officer_form.as_p }}
+    </fieldset>
+    <div class="submit-row">
+      <input type="submit" value="Provision Officer" class="default">
+    </div>
+  </form>
+</div>
+
+<div class="module">
+  <h2>Provision Commander</h2>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="provision_commander" value="1">
+    <fieldset class="module aligned">
+      {{ commander_form.as_p }}
+    </fieldset>
+    <div class="submit-row">
+      <input type="submit" value="Provision Commander" class="default">
+    </div>
+  </form>
+</div>
+
+<div class="module">
+  <h2>Lock Account</h2>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="lock_account" value="1">
+    <fieldset class="module aligned">
+      {{ lock_form.as_p }}
+    </fieldset>
+    <div class="submit-row">
+      <input type="submit" value="Lock Account">
+    </div>
+  </form>
+</div>
+
+<div class="module">
+  <p><a href="{% url 'admin:accounts_user_changelist' %}">Back to users</a></p>
+</div>
+{% endblock %}

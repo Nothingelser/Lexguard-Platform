@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load case_tags %}
+{% block title %}Station Workspace - LexGuard{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">Dashboard</nav>
+{% endblock %}
+{% block content %}
+<section class="lg-page-hero">
+  <div class="lg-page-hero-content">
+    <p class="lg-page-hero-kicker">Station workspace</p>
+    <h1 class="lg-page-hero-title">{{ station.name }}</h1>
+    <p class="lg-page-hero-copy">{{ station.region }} Region &middot; {{ station.county }} County &middot; {{ station.code }}. Local case intake, audit trace, and station-level control.</p>
+    <div class="lg-page-hero-actions">
+      <a href="{% url 'cases:create' %}" class="lg-btn lg-btn-primary">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Register Case
+      </a>
+      <span class="lg-hero-pill">Station-owned data</span>
+      <span class="lg-hero-pill">Audit logged</span>
+    </div>
+  </div>
+  <div class="lg-page-hero-aside">
+    <div class="lg-hero-aside-card">
+      <span>Operational focus</span>
+      <strong>Local case handling</strong>
+      <p>Files stay attached to this precinct until escalation or closure.</p>
+    </div>
+    <div class="lg-hero-aside-card">
+      <span>Supervision</span>
+      <strong>Supervisory reporting</strong>
+      <p>Command can review station data without changing local control.</p>
+    </div>
+  </div>
+</section>
+
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="lg-stat-card" style="--stat-accent: #b8860b">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Open Cases</p>
+    <p class="text-3xl font-bold mt-2 lg-text-warn">{{ open_cases }}</p>
+  </div>
+  <div class="lg-stat-card" style="--stat-accent: #0f766e">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Closed Cases</p>
+    <p class="text-3xl font-bold mt-2 lg-text-success">{{ closed_cases }}</p>
+  </div>
+  <div class="lg-stat-card" style="--stat-accent: #163e63">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Total Registry</p>
+    <p class="text-3xl font-bold mt-2">{{ total_cases }}</p>
+  </div>
+  <div class="lg-stat-card" style="--stat-accent: #475569">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Active Backlog</p>
+    <p class="text-3xl font-bold mt-2 lg-danger">{{ backlog_pct }}%</p>
+  </div>
+</div>
+
+<div class="grid lg:grid-cols-3 gap-6">
+  <section class="lg:col-span-2 lg-card overflow-hidden lg-table-wrap">
+    <div class="lg-card-header">Recent Case Files</div>
+    <div class="lg-section-banner px-4 pt-4">
+      <div class="lg-section-banner__title">Station intake register</div>
+    </div>
+    <table class="lg-table w-full">
+      <thead><tr>
+        <th>Case #</th><th>Title</th><th>Category</th><th>Status</th>
+      </tr></thead>
+      <tbody>
+        {% for case in recent_cases %}
+        <tr>
+          <td><a href="{% url 'cases:detail' case.pk %}" class="lg-link font-medium hover:underline">{{ case.case_number }}</a></td>
+          <td class="max-w-xs truncate">{{ case.title }}</td>
+          <td>{% category_badge case.crime_category case.get_crime_category_display %}</td>
+          <td>{% status_badge case.status case.get_status_display %}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center py-8 text-[var(--lg-muted)]">No cases registered yet. Start with Register Case.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <div class="space-y-6">
+    <section class="lg-card">
+      <div class="lg-card-header flex items-center justify-between">
+        <span>Activity Log</span>
+        <a href="{% url 'cases:audit' %}" class="lg-link normal-case tracking-normal text-xs">View all</a>
+      </div>
+      <div class="p-4 space-y-4 max-h-64 overflow-y-auto">
+        {% for log in activity %}
+        <div class="lg-audit-item">
+          <p class="text-sm font-medium capitalize">{{ log.action }} &middot; {{ log.entity }}</p>
+          <p class="text-xs text-[var(--lg-muted)] mt-0.5">{{ log.detail }}</p>
+          <p class="text-xs text-[var(--lg-muted)] mt-1">{{ log.created_at|date:"M d, H:i" }}{% if log.user %} &middot; {{ log.user.badge_number }}{% endif %}</p>
+        </div>
+        {% empty %}
+        <p class="text-sm text-[var(--lg-muted)] py-4">No activity recorded yet.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="lg-card p-5">
+      <div class="lg-section-banner">
+        <div class="lg-section-banner__title">Operational distribution</div>
+      </div>
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-4">Crime Category Breakdown</h2>
+      <canvas id="categoryChart" height="180"></canvas>
+    </section>
+  </div>
+</div>
+
+<script>
+  const catData = {{ category_json|safe }};
+  if (Object.keys(catData).length) {
+    Chart.defaults.color = '#64748b';
+    new Chart(document.getElementById('categoryChart'), {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(catData).map(k => k.charAt(0).toUpperCase() + k.slice(1)),
+        datasets: [{ data: Object.values(catData), backgroundColor: ['#163e63','#b8860b','#0f766e','#475569','#9a3412','#94a3b8'] }]
+      },
+      options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } }
+    });
+  }
+</script>
+{% endblock %}

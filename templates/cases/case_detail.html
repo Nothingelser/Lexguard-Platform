@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load case_tags %}
+{% block title %}{{ case.case_number }} - LexGuard{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> /
+  <a href="{% url 'cases:list' %}">Case Register</a> /
+  {{ case.case_number }}
+</nav>
+{% endblock %}
+{% block content %}
+<div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-8">
+  <div>
+    <div class="flex items-center gap-3 mb-2">
+      <h1 class="text-2xl font-bold">{{ case.case_number }}</h1>
+      {% status_badge case.status case.get_status_display %}
+      {% category_badge case.crime_category case.get_crime_category_display %}
+    </div>
+    <p class="text-lg text-[var(--lg-text)]">{{ case.title }}</p>
+    <p class="text-sm text-[var(--lg-muted)] mt-2">{{ case.station.name }} &middot; {{ case.location }}</p>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <a href="{% url 'cases:export_pdf' case.pk %}" class="lg-btn lg-btn-secondary">Export PDF</a>
+    {% if user.is_commander %}
+    <a href="{% url 'analytics:pattern_match' case.pk %}" class="lg-btn lg-btn-secondary">Pattern Match</a>
+    {% elif case.status == 'open' %}
+    <form method="post" action="{% url 'cases:investigate' case.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="lg-btn lg-btn-secondary">Mark for Review</button>
+    </form>
+    {% endif %}
+    {% if user.is_station_officer and case.status != 'closed' %}
+    <form method="post" action="{% url 'cases:close' case.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="lg-btn lg-btn-success">Close Record</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid lg:grid-cols-3 gap-6">
+  <div class="lg:col-span-2 space-y-6">
+    <section class="lg-card p-5">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-3">Case Summary</h2>
+      <p class="text-sm leading-relaxed whitespace-pre-wrap">{{ case.narrative }}</p>
+    </section>
+
+    <section class="lg-card p-5">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-3">Modus Operandi Matrix</h2>
+      {% if case.modus_operandi %}
+      <div class="flex flex-wrap gap-2">
+        {% for key, value in case.modus_operandi.items %}
+        <span class="mo-chip">
+          <span class="mo-chip-label">{{ key }}</span>
+          {% mo_label key value %}
+        </span>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-sm text-[var(--lg-muted)]">No MO tags recorded for this case.</p>
+      {% endif %}
+    </section>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <section class="lg-card">
+        <div class="lg-card-header">Witnesses</div>
+        <div class="p-4" id="witness-list">{% include "cases/partials/witness_list.html" %}</div>
+        {% if user.is_station_officer and case.status != 'closed' %}
+        <form method="post" action="{% url 'cases:add_witness' case.pk %}" hx-post="{% url 'cases:add_witness' case.pk %}" hx-target="#witness-list" hx-swap="innerHTML" class="p-4 border-t border-[var(--lg-border)] space-y-2">
+          {% csrf_token %}
+          {{ witness_form.full_name }}
+          {{ witness_form.contact }}
+          {{ witness_form.statement }}
+          <button type="submit" class="lg-btn lg-btn-primary w-full text-xs">Add Witness</button>
+        </form>
+        {% endif %}
+      </section>
+
+      <section class="lg-card">
+        <div class="lg-card-header">Evidence Log</div>
+        <div class="p-4" id="evidence-list">{% include "cases/partials/evidence_list.html" %}</div>
+        {% if user.is_station_officer and case.status != 'closed' %}
+        <form method="post" action="{% url 'cases:add_evidence' case.pk %}" hx-post="{% url 'cases:add_evidence' case.pk %}" hx-target="#evidence-list" hx-swap="innerHTML" class="p-4 border-t border-[var(--lg-border)] space-y-2">
+          {% csrf_token %}
+          {{ evidence_form.label }}
+          {{ evidence_form.description }}
+          {{ evidence_form.storage_path }}
+          <button type="submit" class="lg-btn lg-btn-primary w-full text-xs">Record Evidence</button>
+        </form>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <section class="lg-card p-5">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-4">Case Metadata</h2>
+      <dl class="space-y-3 text-sm">
+        <div><dt class="text-[var(--lg-muted)] text-xs uppercase">Opened</dt><dd>{{ case.opened_at|date:"M d, Y H:i" }}</dd></div>
+        <div><dt class="text-[var(--lg-muted)] text-xs uppercase">Lead Officer</dt><dd>{{ case.created_by.get_full_name|default:case.created_by.username }}</dd></div>
+        <div><dt class="text-[var(--lg-muted)] text-xs uppercase">Badge</dt><dd>{{ case.created_by.badge_number }}</dd></div>
+        {% if case.closed_at %}<div><dt class="text-[var(--lg-muted)] text-xs uppercase">Closed</dt><dd>{{ case.closed_at|date:"M d, Y H:i" }}</dd></div>{% endif %}
+      </dl>
+    </section>
+
+    <section class="lg-card">
+      <div class="lg-card-header">Linked Suspects</div>
+      <div class="p-4" id="suspect-list">{% include "cases/partials/suspect_list.html" %}</div>
+      {% if user.is_station_officer and case.status != 'closed' %}
+      <form method="post" action="{% url 'cases:link_suspect' case.pk %}" hx-post="{% url 'cases:link_suspect' case.pk %}" hx-target="#suspect-list" hx-swap="innerHTML" class="p-4 border-t border-[var(--lg-border)] space-y-2">
+        {% csrf_token %}
+        <input name="national_id" placeholder="National ID" required class="lg-input text-sm">
+        <input name="full_name" placeholder="Full name (if new record)" class="lg-input text-sm">
+        <button type="submit" class="lg-btn lg-btn-primary w-full text-xs">Link Record</button>
+      </form>
+      {% endif %}
+    </section>
+  </div>
+</div>
+
+<section class="lg-card mt-6">
+  <div class="lg-card-header">Case Activity Timeline</div>
+  <div class="p-5 space-y-4">
+    {% for entry in timeline %}
+    <div class="lg-audit-item">
+      <p class="text-sm font-medium capitalize">{{ entry.action }} - {{ entry.entity }}</p>
+      <p class="text-xs text-[var(--lg-muted)] mt-0.5">{{ entry.detail }}</p>
+      <p class="text-xs text-[var(--lg-muted)] mt-1">{{ entry.created_at|date:"M d, Y H:i:s" }}{% if entry.user %} &middot; {{ entry.user.badge_number }}{% endif %}</p>
+    </div>
+    {% empty %}
+    <p class="text-sm text-[var(--lg-muted)]">No activity logged for this case yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

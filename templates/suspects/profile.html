@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load case_tags %}
+{% block title %}{{ suspect.full_name }} - Suspect Profile{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> /
+  <a href="{% url 'suspects:search' %}">Suspects</a> / {{ suspect.national_id }}
+</nav>
+{% endblock %}
+{% block content %}
+<section class="lg-page-hero">
+  <div class="lg-page-hero-content">
+    <p class="lg-page-hero-kicker">Identity profile</p>
+    <h1 class="lg-page-hero-title">{{ suspect.full_name }}</h1>
+    <p class="lg-page-hero-copy">National ID: {{ suspect.national_id }}{% if suspect.aliases %}. Aliases: {{ suspect.aliases }}{% endif %}</p>
+  </div>
+  <div class="lg-page-hero-aside">
+    <div class="lg-hero-aside-card">
+      <span>Registry status</span>
+      <strong>Centralized identity record</strong>
+      <p>Updated {{ suspect.updated_at|date:"M d, Y" }}</p>
+    </div>
+    <div class="lg-hero-aside-card">
+      <span>Linkage</span>
+      <strong>{{ case_links|length }} case file{{ case_links|length|pluralize }}</strong>
+      <p>All linked cases below follow the same identity profile.</p>
+    </div>
+  </div>
+</section>
+
+<section class="lg-card overflow-hidden lg-table-wrap">
+  <div class="lg-card-header">Linked Case Files ({{ case_links|length }})</div>
+  <table class="lg-table w-full">
+    <thead><tr>
+      <th>Case #</th>
+      {% if user.is_commander %}<th>Station</th>{% endif %}
+      <th>Title</th>
+      <th>Role</th>
+      <th>Status</th>
+      <th></th>
+    </tr></thead>
+    <tbody>
+      {% for link in case_links %}
+      <tr>
+        <td class="font-medium">{{ link.case.case_number }}</td>
+        {% if user.is_commander %}<td class="font-mono text-xs">{{ link.case.station.code }}</td>{% endif %}
+        <td class="max-w-xs truncate">{{ link.case.title }}</td>
+        <td><span class="badge badge-other">{{ link.role }}</span></td>
+        <td>{% status_badge link.case.status link.case.get_status_display %}</td>
+        <td><a href="{% url 'cases:detail' link.case.pk %}" class="lg-link text-xs">Open</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center py-10 text-[var(--lg-muted)]">No cases linked to this identity in your jurisdiction.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

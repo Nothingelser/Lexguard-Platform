@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Suspect Directory — LexGuard{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> / Suspect Directory
+</nav>
+{% endblock %}
+{% block content %}
+<section class="lg-page-hero">
+  <div class="lg-page-hero-content">
+    <p class="lg-page-hero-kicker">Identity registry</p>
+    <h1 class="lg-page-hero-title">Centralized Suspect Directory</h1>
+    <p class="lg-page-hero-copy">National ID resolution registry for cross-case identity matching. It keeps one record per person and links aliases to a single profile.</p>
+  </div>
+  <div class="lg-page-hero-aside">
+    <div class="lg-hero-aside-card">
+      <span>Search mode</span>
+      <strong>National ID or name</strong>
+      <p>Search by identity first, then open the linked profile or register a new record.</p>
+    </div>
+    <div class="lg-hero-aside-card">
+      <span>Scope</span>
+      <strong>Jurisdiction aware</strong>
+      <p>Command views see broader context while station users remain within their precinct boundary.</p>
+    </div>
+  </div>
+</section>
+
+<div class="lg-card p-4 mb-5">
+  <form method="get" action="{% url 'suspects:search' %}"
+        hx-get="{% url 'suspects:search' %}"
+        hx-target="#search-results"
+        hx-trigger="keyup changed delay:300ms from:#search-input, submit">
+    <label class="block text-xs font-medium text-[var(--lg-muted)] uppercase tracking-[0.24em] mb-2">Search by National ID or name</label>
+    <input type="search" name="q" id="search-input" value="{{ query }}" placeholder="Enter ID number or full name..."
+           class="lg-input max-w-2xl">
+  </form>
+</div>
+
+<div id="search-results">
+  {% include "suspects/partials/search_results.html" %}
+</div>
+{% endblock %}

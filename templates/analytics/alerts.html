@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Priority MO Alerts - LexGuard{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'command_dashboard' %}">Regional Command</a> / Priority Alerts
+</nav>
+{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-2xl font-bold mb-2">Priority MO Linkage Alerts</h1>
+  <p class="text-[var(--lg-muted)] text-sm">
+    Deterministic pattern matching across Coast Region precincts. Fixed tag weights flag similar
+    modus operandi between cases without using machine learning.
+  </p>
+</div>
+
+<section class="lg-card overflow-hidden">
+  <table class="lg-table w-full">
+    <thead><tr>
+      <th>Score</th>
+      <th>Source Case</th>
+      <th>Source County</th>
+      <th>Linked Case</th>
+      <th>Target County</th>
+      <th></th>
+    </tr></thead>
+    <tbody>
+      {% for alert in alerts %}
+      <tr>
+        <td><span class="lg-match-score">{{ alert.score }}</span></td>
+        <td>
+          <a href="{% url 'cases:detail' alert.source.pk %}" class="lg-link font-medium">{{ alert.source.case_number }}</a>
+          <span class="block text-xs text-[var(--lg-muted)]">{{ alert.source.station.code }}</span>
+        </td>
+        <td>{{ alert.source.station.county }}</td>
+        <td>
+          <a href="{% url 'cases:detail' alert.target.pk %}" class="lg-link font-medium">{{ alert.target.case_number }}</a>
+          <span class="block text-xs text-[var(--lg-muted)]">{{ alert.target.station.code }}</span>
+        </td>
+        <td>{{ alert.target.station.county }}</td>
+        <td><a href="{% url 'analytics:pattern_match' alert.source.pk %}" class="lg-text-success text-xs hover:underline">Analyze</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center py-10 text-[var(--lg-muted)]">No priority MO linkages above threshold.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

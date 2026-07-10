@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load case_tags %}
+{% block title %}Pattern Match - {{ case.case_number }}{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'command_dashboard' %}">Command</a> /
+  <a href="{% url 'cases:detail' case.pk %}">{{ case.case_number }}</a> / Pattern Match
+</nav>
+{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-2xl font-bold mb-2">Cross-Precinct MO Pattern Match</h1>
+  <p class="text-[var(--lg-muted)] text-sm">Deterministic weighted scoring against cases from other precincts.</p>
+</div>
+
+<div class="lg-card p-5 mb-6">
+  <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider mb-2">Source Case</p>
+  <p class="font-medium">{{ case.case_number }} - {{ case.title }}</p>
+  <p class="text-sm text-[var(--lg-muted)] mt-1">{{ case.station.name }} ({{ case.station.code }})</p>
+  {% if case.modus_operandi %}
+  <div class="flex flex-wrap gap-2 mt-3">
+    {% for key, value in case.modus_operandi.items %}
+    <span class="mo-chip"><span class="mo-chip-label">{{ key }}</span> {% mo_label key value %}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<div id="match-results">{% include "analytics/partials/match_results.html" %}</div>
+{% endblock %}

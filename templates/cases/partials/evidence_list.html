@@ -1,0 +1,13 @@
+{% if case.evidence_items.all %}
+<ul class="space-y-3">
+  {% for item in case.evidence_items.all %}
+  <li class="border-l-2 pl-3" style="border-color: var(--lg-border);">
+    <p class="text-sm font-medium">{{ item.label }}</p>
+    {% if item.description %}<p class="text-xs text-[var(--lg-muted)] mt-0.5">{{ item.description|truncatewords:15 }}</p>{% endif %}
+    {% if item.storage_path %}<p class="text-xs font-mono lg-link-muted mt-1">{{ item.storage_path }}</p>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="text-sm text-[var(--lg-muted)]">No evidence logged.</p>
+{% endif %}

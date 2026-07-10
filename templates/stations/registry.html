@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Precinct Registry - LexGuard{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> / {{ region }} Region Precincts
+</nav>
+{% endblock %}
+{% block content %}
+<section class="lg-page-hero">
+  <div class="lg-page-hero-content">
+    <p class="lg-page-hero-kicker">Precinct registry</p>
+    <h1 class="lg-page-hero-title">{{ region }} Region Precinct Registry</h1>
+    <p class="lg-page-hero-copy">{{ total_stations }} active police stations across {{ county_stats|length }} counties. This ledger governs station codes, dropdown lists, and officer placement.</p>
+  </div>
+  <div class="lg-page-hero-aside">
+    <div class="lg-hero-aside-card">
+      <span>Why it matters</span>
+      <strong>Authority map</strong>
+      <p>It defines where an officer belongs and which records they can reach.</p>
+    </div>
+    <div class="lg-hero-aside-card">
+      <span>Data use</span>
+      <strong>Dropdown source</strong>
+      <p>County and station selectors pull from this registry so account creation stays consistent.</p>
+    </div>
+  </div>
+</section>
+
+<div class="grid sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+  {% for row in county_stats %}
+  <div class="lg-stat-card" style="--stat-accent: #b8860b">
+    <p class="text-xs text-[var(--lg-muted)] uppercase tracking-[0.22em]">{{ row.county }}</p>
+    <p class="text-2xl font-bold mt-1">{{ row.count }}</p>
+    <p class="text-xs text-[var(--lg-muted)]">precincts</p>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="space-y-5">
+  {% for county, stations in by_county.items %}
+  <section class="lg-card overflow-hidden lg-table-wrap">
+    <div class="lg-card-header">{{ county }} County &middot; {{ stations|length }} stations</div>
+    <table class="lg-table w-full">
+      <thead><tr><th>Code</th><th>Station Name</th><th>Sub-County</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for station in stations %}
+        <tr>
+          <td class="font-mono text-sm lg-link">{{ station.code }}</td>
+          <td class="font-medium">{{ station.name }}</td>
+          <td class="text-sm text-[var(--lg-muted)]">{{ station.sub_county }}</td>
+          <td><span class="badge badge-closed">Active</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

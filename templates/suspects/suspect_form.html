@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Register Suspect - LexGuard{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> /
+  <a href="{% url 'suspects:search' %}">Suspects</a> / Register New Suspect
+</nav>
+{% endblock %}
+{% block content %}
+<section class="lg-page-hero">
+  <div class="lg-page-hero-content">
+    <p class="lg-page-hero-kicker">Identity intake</p>
+    <h1 class="lg-page-hero-title">Register New Suspect</h1>
+    <p class="lg-page-hero-copy">Create a centralized identity record for future case linking and avoid duplicates across stations.</p>
+  </div>
+  <div class="lg-page-hero-aside">
+    <div class="lg-hero-aside-card">
+      <span>Record type</span>
+      <strong>Central identity entry</strong>
+      <p>Use precise identifiers, then attach notes as needed.</p>
+    </div>
+    <div class="lg-hero-aside-card">
+      <span>Access</span>
+      <strong>Station and command aware</strong>
+      <p>Visible according to the logged-in officer’s scope.</p>
+    </div>
+  </div>
+</section>
+
+<form method="post" class="lg-card p-5 max-w-3xl space-y-5">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+  <div class="lg-card p-3 text-sm lg-danger">
+    {{ form.non_field_errors }}
+  </div>
+  {% endif %}
+
+  <div class="grid md:grid-cols-2 gap-4">
+    <div>
+      <label class="block text-xs font-medium text-[var(--lg-muted)] uppercase tracking-[0.24em] mb-2" for="{{ form.national_id.id_for_label }}">National ID</label>
+      {{ form.national_id }}
+      {{ form.national_id.errors }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-[var(--lg-muted)] uppercase tracking-[0.24em] mb-2" for="{{ form.full_name.id_for_label }}">Full Name</label>
+      {{ form.full_name }}
+      {{ form.full_name.errors }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-[var(--lg-muted)] uppercase tracking-[0.24em] mb-2" for="{{ form.aliases.id_for_label }}">Aliases</label>
+      {{ form.aliases }}
+      {{ form.aliases.errors }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-[var(--lg-muted)] uppercase tracking-[0.24em] mb-2" for="{{ form.date_of_birth.id_for_label }}">Date of Birth</label>
+      {{ form.date_of_birth }}
+      {{ form.date_of_birth.errors }}
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-xs font-medium text-[var(--lg-muted)] uppercase tracking-[0.24em] mb-2" for="{{ form.notes.id_for_label }}">Notes</label>
+    {{ form.notes }}
+    {{ form.notes.errors }}
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    <button type="submit" class="lg-btn lg-btn-primary">Save Suspect</button>
+    <a href="{% url 'suspects:search' %}" class="lg-btn lg-btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

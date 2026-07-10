@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load case_tags %}
+{% block title %}Case Registry — LexGuard{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> / Case Register
+</nav>
+{% endblock %}
+{% block content %}
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+  <h1 class="text-2xl font-bold">Case Register</h1>
+  {% if user.is_station_officer %}
+  <a href="{% url 'cases:create' %}" class="lg-btn lg-btn-primary">Register Case</a>
+  {% endif %}
+</div>
+
+<div class="lg-card p-4 mb-4">
+  <form method="get" action="{% url 'cases:list' %}" hx-get="{% url 'cases:list' %}" hx-target="#case-table" hx-trigger="keyup changed delay:400ms from:#case-search, submit">
+    <input type="search" name="q" id="case-search" value="{{ search_query }}" placeholder="Search case number, title, location, or narrative..."
+           class="lg-input max-w-xl">
+    {% if active_status %}<input type="hidden" name="status" value="{{ active_status }}">{% endif %}
+    {% if active_category %}<input type="hidden" name="category" value="{{ active_category }}">{% endif %}
+  </form>
+</div>
+
+<div class="flex flex-wrap gap-2 mb-3">
+  <span class="text-xs text-[var(--lg-muted)] self-center mr-1">Status:</span>
+  <a href="{% url 'cases:list' %}{% if search_query %}?q={{ search_query }}{% endif %}" hx-get="{% url 'cases:list' %}{% if search_query %}?q={{ search_query }}{% endif %}" hx-target="#case-table" class="lg-filter-pill {% if not active_status %}active{% endif %}">All</a>
+  {% for value, label in status_choices %}
+  <a href="?status={{ value }}{% if search_query %}&q={{ search_query }}{% endif %}" hx-get="?status={{ value }}{% if search_query %}&q={{ search_query }}{% endif %}" hx-target="#case-table" class="lg-filter-pill {% if active_status == value %}active{% endif %}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<div class="flex flex-wrap gap-2 mb-4">
+  <span class="text-xs text-[var(--lg-muted)] self-center mr-1">Category:</span>
+  <a href="{% url 'cases:list' %}{% if active_status %}?status={{ active_status }}{% endif %}{% if search_query %}{% if active_status %}&{% else %}?{% endif %}q={{ search_query }}{% endif %}" hx-get="{% url 'cases:list' %}?{% if active_status %}status={{ active_status }}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}" hx-target="#case-table" class="lg-filter-pill {% if not active_category %}active{% endif %}">All</a>
+  {% for value, label in category_choices %}
+  <a href="?category={{ value }}{% if active_status %}&status={{ active_status }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" hx-get="?category={{ value }}{% if active_status %}&status={{ active_status }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" hx-target="#case-table" class="lg-filter-pill {% if active_category == value %}active{% endif %}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<div id="case-table">
+  {% include "cases/partials/case_table.html" %}
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+<ul class="space-y-3">
+  {% for link in case.case_suspects.all %}
+  <li class="flex items-start justify-between gap-2">
+    <div>
+      <a href="{% url 'suspects:profile' link.suspect.pk %}" class="text-sm font-medium lg-link">{{ link.suspect.full_name }}</a>
+      <p class="text-xs font-mono text-[var(--lg-muted)]">{{ link.suspect.national_id }}</p>
+    </div>
+    <span class="badge badge-other text-[0.6rem]">{{ link.role }}</span>
+  </li>
+  {% empty %}
+  <li class="text-sm text-[var(--lg-muted)]">No suspects linked to this case.</li>
+  {% endfor %}
+</ul>

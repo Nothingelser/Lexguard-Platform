@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Commander Dashboard - LexGuard{% endblock %}
+{% block breadcrumbs %}
+<nav class="lg-breadcrumb mb-6">
+  <a href="{% url 'dashboard' %}">Dashboard</a> / Regional Command Desk
+</nav>
+{% endblock %}
+{% block content %}
+<div class="lg-ledger-banner">
+  <div>
+    <div class="lg-ledger-banner__label">Leadership record</div>
+    <div class="lg-ledger-banner__title">Coast Region command desk</div>
+  </div>
+  <div class="lg-ledger-banner__meta">
+    <span class="lg-ledger-chip">Leadership view</span>
+    <span class="lg-ledger-chip">Regional desk</span>
+  </div>
+</div>
+
+<div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6 mb-8">
+  <div class="max-w-3xl">
+    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--lg-muted)]">Regional command overview</p>
+    <h1 class="text-3xl font-bold mt-3">Coast Region command desk</h1>
+    <p class="text-[var(--lg-muted)] mt-3 text-sm leading-6">
+      A concise operational snapshot for leadership. Use this page to review the region at a glance, then open the full command console for charts, exports, and cross-county review.
+    </p>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <a href="{% url 'command_dashboard' %}" class="lg-btn lg-btn-primary">Open Command Console</a>
+    <a href="{% url 'analytics:alerts' %}" class="lg-btn lg-btn-secondary">Review Alerts</a>
+    <a href="{% url 'cases:list' %}" class="lg-btn lg-btn-secondary">Case Registry</a>
+  </div>
+</div>
+
+<div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+  <div class="lg-stat-card" style="--stat-accent: #163e63">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Regional Cases</p>
+    <p class="text-3xl font-bold mt-2">{{ total_cases }}</p>
+  </div>
+  <div class="lg-stat-card" style="--stat-accent: #b8860b">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Open Cases</p>
+    <p class="text-3xl font-bold mt-2 lg-text-warn">{{ open_cases }}</p>
+  </div>
+  <div class="lg-stat-card" style="--stat-accent: #0f766e">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Closed Cases</p>
+    <p class="text-3xl font-bold mt-2 lg-text-success">{{ closed_cases }}</p>
+  </div>
+  <div class="lg-stat-card" style="--stat-accent: #475569">
+    <p class="text-xs font-medium text-[var(--lg-muted)] uppercase tracking-wider">Tracked Counties</p>
+    <p class="text-3xl font-bold mt-2">{{ county_pressure|length }}</p>
+  </div>
+</div>
+
+<div class="grid xl:grid-cols-3 gap-6 mb-8">
+  <section class="lg-card overflow-hidden xl:col-span-2">
+    <div class="lg-card-header">Recent Regional Case Intake</div>
+    <table class="lg-table w-full">
+      <thead>
+        <tr>
+          <th>Case #</th>
+          <th>Title</th>
+          <th>County</th>
+          <th>Station</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for case in recent_cases %}
+        <tr>
+          <td><a href="{% url 'cases:detail' case.pk %}" class="lg-link font-medium">{{ case.case_number }}</a></td>
+          <td class="max-w-xs truncate">{{ case.title }}</td>
+          <td>{{ case.station.county }}</td>
+          <td class="text-xs font-mono">{{ case.station.code }}</td>
+          <td class="capitalize">{{ case.get_status_display }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center py-8 text-[var(--lg-muted)]">No cases have been registered yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <div class="space-y-6">
+    <section class="lg-card">
+      <div class="lg-card-header">County Pressure Index</div>
+      <div class="p-4 space-y-3">
+        {% for row in county_pressure %}
+        <div>
+          <div class="flex items-center justify-between text-sm mb-1">
+            <span class="font-medium">{{ row.station__county }}</span>
+            <span class="text-[var(--lg-muted)]">{{ row.count }}</span>
+          </div>
+          <div class="w-full h-2 bg-[var(--lg-border)] rounded-full overflow-hidden">
+            <div class="h-full lg-bar-warn rounded-full" style="width: {% widthratio row.count max_count 100 %}%"></div>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-sm text-[var(--lg-muted)] py-2">No county data available.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="lg-card">
+      <div class="lg-card-header">Priority MO Alerts</div>
+      <div class="p-4 space-y-4">
+        {% for alert in recent_alerts %}
+        <div class="border-b border-[var(--lg-border)] pb-3 last:border-b-0 last:pb-0">
+          <p class="text-sm font-medium">Score {{ alert.score }}: {{ alert.source.case_number }} vs {{ alert.target.case_number }}</p>
+          <p class="text-xs text-[var(--lg-muted)] mt-1">{{ alert.source.station.county }} to {{ alert.target.station.county }}</p>
+        </div>
+        {% empty %}
+        <p class="text-sm text-[var(--lg-muted)] py-2">No alerts currently meet the match threshold.</p>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

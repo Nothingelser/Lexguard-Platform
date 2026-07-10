@@ -1,0 +1,13 @@
+{% if case.witnesses.all %}
+<ul class="space-y-3">
+  {% for w in case.witnesses.all %}
+  <li class="border-l-2 border-[var(--lg-border)] pl-3">
+    <p class="text-sm font-medium">{{ w.full_name }}</p>
+    {% if w.contact %}<p class="text-xs text-[var(--lg-muted)]">{{ w.contact }}</p>{% endif %}
+    {% if w.statement %}<p class="text-xs mt-1 text-[var(--lg-muted)]">{{ w.statement|truncatewords:20 }}</p>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="text-sm text-[var(--lg-muted)]">No witnesses recorded.</p>
+{% endif %}
