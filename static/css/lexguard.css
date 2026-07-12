@@ -2666,13 +2666,35 @@ body.sidebar-open {
 }
 
 .lg-app-content-inner {
-  width: min(100%, 78rem);
+  width: min(100%, 84rem);
   margin: 0 auto;
   padding: 0.85rem 0.9rem 1.15rem;
 }
 
 .lg-workbench-shell {
   width: 100%;
+}
+
+.lg-workbench-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 0.9rem;
+}
+
+.lg-overview-card {
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--lg-panel-border);
+  border-radius: 1rem;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--lg-accent) 4%, var(--lg-panel)), var(--lg-panel));
+  box-shadow: 0 18px 34px rgba(2, 6, 23, 0.04);
+}
+
+.lg-overview-actions {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.7rem;
 }
 
 .lg-workbench-grid {
@@ -2872,6 +2894,23 @@ body.sidebar-open {
   background: #f8fbff;
 }
 
+.lg-mobile-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--lg-border);
+  background: var(--lg-panel);
+  color: var(--page-text);
+}
+
+.lg-mobile-logout svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 .lg-sidebar.is-open {
   transform: translateX(0);
 }
@@ -2913,12 +2952,12 @@ body.sidebar-open .lg-sidebar {
     overflow-x: visible;
   }
 
-  .lg-workbench-grid {
+  .lg-workbench-overview {
     grid-template-columns: 1fr;
   }
 
-  .lg-workbench-rail {
-    position: static;
+  .lg-workbench-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2945,7 +2984,8 @@ body.sidebar-open .lg-sidebar {
   }
 
   .lg-app-content-inner {
-    padding: 0.9rem 0.9rem 1.1rem;
+    width: 100%;
+    padding: 0.8rem 0.8rem 1rem;
   }
 
   .lg-sidebar-user-row {
@@ -2980,6 +3020,10 @@ body.sidebar-open .lg-sidebar {
     border-radius: 0.9rem;
   }
 
+  .lg-workbench-overview {
+    grid-template-columns: 1fr;
+  }
+
   .lg-command-bar {
     flex-direction: column;
     align-items: flex-start;
@@ -2989,15 +3033,19 @@ body.sidebar-open .lg-sidebar {
     width: 100%;
     justify-content: flex-start;
   }
+
+  .lg-sidebar-summary div {
+    grid-template-columns: 3rem minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 720px) {
   .lg-app-content-inner {
-    padding: 1rem;
+    padding: 0.7rem 0.7rem 0.95rem;
   }
 
   .lg-sidebar-shell {
-    padding: 1rem 0.75rem 0.85rem;
+    padding: 0.8rem 0.7rem 0.75rem;
   }
 
   .lg-sidebar-user-row {
@@ -3010,6 +3058,19 @@ body.sidebar-open .lg-sidebar {
 
   .lg-rail-dl div {
     grid-template-columns: 3rem minmax(0, 1fr);
+  }
+
+  .lg-sidebar {
+    width: min(92vw, 22rem);
+    max-width: 22rem;
+  }
+
+  .lg-workbench-stage {
+    padding: 0.72rem;
+  }
+
+  .lg-sidebar-summary dd {
+    font-size: 0.78rem;
   }
 }
 
@@ -3097,6 +3158,69 @@ body.light-mode {
   --lg-panel-border: rgba(22, 62, 99, 0.14) !important;
 }
 
+body.light-mode .lg-sidebar {
+  color: #f8fafc;
+}
+
+body.light-mode .lg-sidebar-eyebrow,
+body.light-mode .lg-sidebar-subtitle,
+body.light-mode .lg-sidebar-status-row,
+body.light-mode .lg-sidebar-status-copy,
+body.light-mode .lg-sidebar-section-title,
+body.light-mode .lg-nav-link,
+body.light-mode .lg-nav-link__text small,
+body.light-mode .lg-sidebar-user-action {
+  color: rgba(248, 250, 252, 0.74) !important;
+}
+
+body.light-mode .lg-sidebar-title,
+body.light-mode .lg-nav-link__text strong {
+  color: #f8fafc !important;
+}
+
+body.light-mode .lg-nav-link:hover,
+body.light-mode .lg-nav-link.active {
+  color: #ffffff !important;
+}
+
+body.light-mode .lg-sidebar-brand-link,
+body.light-mode .lg-sidebar-status {
+  border-color: rgba(245, 246, 247, 0.14);
+}
+
+body.light-mode .lg-sidebar-footer {
+  background: linear-gradient(180deg, rgba(10, 18, 30, 0.96), rgba(13, 24, 40, 0.98)) !important;
+  border-color: rgba(245, 246, 247, 0.14) !important;
+}
+
+body.light-mode .lg-sidebar-summary dt,
+body.light-mode .lg-sidebar-summary dd,
+body.light-mode .lg-sidebar-user-action {
+  color: #f8fafc !important;
+}
+
+body.light-mode .lg-masthead-actions {
+  margin-left: auto;
+}
+
+body.light-mode .lg-masthead-logout {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #1d2838 !important;
+  border-color: rgba(29, 40, 56, 0.14) !important;
+}
+
+body.light-mode .lg-workbench-overview,
+body.light-mode .lg-overview-card,
+body.light-mode .lg-workbench-stage {
+  border-color: var(--lg-border) !important;
+}
+
+body.light-mode .lg-overview-card {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.95)) !important;
+  box-shadow: 0 18px 34px rgba(29, 40, 56, 0.06) !important;
+}
+
 /* Ensure cards and panels contrast appropriately */
 .lg-card, .lg-stat-card {
   background: var(--page-bg) !important;
@@ -3115,6 +3239,61 @@ body.light-mode {
 }
 
 .lg-btn-primary { color: white; font-weight: 600; }
+
+.lg-masthead-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.lg-masthead-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.56rem 0.8rem;
+  border-radius: 9999px;
+  border: 1px solid var(--lg-panel-border);
+  background: var(--lg-panel);
+  color: var(--page-text);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.lg-masthead-logout svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.lg-sidebar-summary {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+}
+
+.lg-sidebar-summary div {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: baseline;
+}
+
+.lg-sidebar-summary dt {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(248, 250, 252, 0.58);
+}
+
+.lg-sidebar-summary dd {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #f8fafc;
+  text-align: right;
+}
 
 body.light-mode .lg-app-shell {
   background:

@@ -89,6 +89,8 @@ class EvidenceItem(models.Model):
     label = models.CharField(max_length=128)
     description = models.TextField(blank=True)
     storage_path = models.CharField(max_length=512, blank=True)
+    file_size = models.PositiveBigIntegerField(null=True, blank=True)
+    uploaded_at = models.DateTimeField(null=True, blank=True)
 
 
 class AuditLog(models.Model):

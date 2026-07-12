@@ -2,6 +2,7 @@
 
 import os
 import sys
+from urllib.parse import parse_qs, urlparse
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -64,9 +65,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 if DATABASE_URL:
-    from urllib.parse import urlparse
-
     parsed = urlparse(DATABASE_URL)
+    query = parse_qs(parsed.query)
+    sslmode = os.getenv("DATABASE_SSLMODE", "").strip() or query.get("sslmode", ["require"])[0]
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -75,6 +76,10 @@ if DATABASE_URL:
             "PASSWORD": parsed.password,
             "HOST": parsed.hostname,
             "PORT": parsed.port or 5432,
+            "CONN_MAX_AGE": int(os.getenv("DATABASE_CONN_MAX_AGE", "600")),
+            "OPTIONS": {
+                "sslmode": sslmode,
+            },
         }
     }
 else:
@@ -84,6 +89,11 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+SUPABASE_STORAGE_BUCKET = os.getenv("SUPABASE_STORAGE_BUCKET", "case-evidence").strip()
+SUPABASE_STORAGE_PUBLIC = os.getenv("SUPABASE_STORAGE_PUBLIC", "True").lower() in ("1", "true", "yes")
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

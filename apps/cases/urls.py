@@ -14,5 +14,6 @@ urlpatterns = [
     path("<int:pk>/link-suspect/", views.case_link_suspect, name="link_suspect"),
     path("<int:pk>/add-witness/", views.case_add_witness, name="add_witness"),
     path("<int:pk>/add-evidence/", views.case_add_evidence, name="add_evidence"),
+    path("<int:case_pk>/evidence/<int:pk>/delete/", views.case_delete_evidence, name="delete_evidence"),
     path("<int:pk>/close/", views.case_close, name="close"),
 ]

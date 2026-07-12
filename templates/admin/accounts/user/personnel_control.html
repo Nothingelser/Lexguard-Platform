@@ -49,6 +49,56 @@
 </div>
 
 <div class="module">
+  <h2>Renumber Badge IDs</h2>
+  <p>Preview and re-align existing badge numbers to the current LexGuard format.</p>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="renumber_badges" value="1">
+    <fieldset class="module aligned">
+      {{ renumber_form.as_p }}
+    </fieldset>
+    <div class="submit-row">
+      <input type="submit" value="Preview / Apply" class="default">
+    </div>
+  </form>
+
+  {% if renumber_preview %}
+  <div style="margin-top: 1rem;">
+    <h3>Preview</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th align="left">Current</th>
+          <th align="left">New</th>
+          <th align="left">User</th>
+          <th align="left">Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user, badge in renumber_preview %}
+        <tr>
+          <td>{{ user.badge_number }}</td>
+          <td><strong>{{ badge }}</strong></td>
+          <td>{{ user.get_full_name|default:user.username }}</td>
+          <td>{{ user.get_role_display }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <form method="post" style="margin-top: 1rem;">
+      {% csrf_token %}
+      <input type="hidden" name="renumber_badges" value="1">
+      <input type="hidden" name="scope" value="{{ renumber_form.scope.value }}">
+      <input type="hidden" name="station" value="{{ renumber_form.station.value|default_if_none:'' }}">
+      <input type="hidden" name="apply_changes" value="1">
+      <input type="submit" value="Apply renumbering" class="default">
+    </form>
+  </div>
+  {% endif %}
+</div>
+
+<div class="module">
   <p><a href="{% url 'admin:accounts_user_changelist' %}">Back to users</a></p>
 </div>
 {% endblock %}

@@ -82,11 +82,17 @@ class WitnessForm(forms.ModelForm):
 
 
 class EvidenceForm(forms.ModelForm):
+    upload_file = forms.FileField(
+        required=False,
+        label="Upload File",
+        widget=forms.ClearableFileInput(attrs={"class": INPUT_CLASS, "accept": "image/*,video/*,audio/*"}),
+    )
+
     class Meta:
         model = EvidenceItem
         fields = ["label", "description", "storage_path"]
         widgets = {
             "label": forms.TextInput(attrs={"class": INPUT_CLASS, "placeholder": "e.g. CCTV footage"}),
             "description": forms.Textarea(attrs={"class": INPUT_CLASS, "rows": 2}),
-            "storage_path": forms.TextInput(attrs={"class": INPUT_CLASS, "placeholder": "Chain-of-custody path / reference"}),
+            "storage_path": forms.TextInput(attrs={"class": INPUT_CLASS, "placeholder": "Optional storage reference or note"}),
         }

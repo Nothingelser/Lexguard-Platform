@@ -7,7 +7,7 @@
   <title>{% block title %}LexGuard{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-  <link rel="stylesheet" href="{% static 'css/lexguard.css' %}?v=20260710c">
+  <link rel="stylesheet" href="{% static 'css/lexguard.css' %}?v=20260710f">
   {% block extra_head %}{% endblock %}
 </head>
 <body class="min-h-screen">
@@ -120,20 +120,33 @@
         </nav>
 
         <div class="lg-sidebar-footer">
-          <p class="lg-sidebar-section-title">Account controls</p>
+          <p class="lg-sidebar-section-title">Session details</p>
+          <dl class="lg-sidebar-summary">
+            <div>
+              <dt>Badge</dt>
+              <dd>{{ user.badge_number }}</dd>
+            </div>
+            <div>
+              <dt>Role</dt>
+              <dd>{{ user.get_role_display }}</dd>
+            </div>
+            {% if user.station %}
+            <div>
+              <dt>Station</dt>
+              <dd>{{ user.station.code }}</dd>
+            </div>
+            {% endif %}
+          </dl>
           <a href="{% url 'accounts:password_change' %}" class="lg-sidebar-user-action">Change password</a>
-          <form method="post" action="{% url 'accounts:logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="lg-btn lg-btn-secondary w-full">Sign out</button>
-          </form>
         </div>
+
       </div>
     </aside>
     {% endif %}
 
     <div class="lg-app-main flex-1 flex flex-col min-w-0">
       {% if user.is_authenticated %}
-      <header class="lg-masthead">
+      <header class="lg-masthead hidden md:flex">
         <div class="lg-masthead-brand">
           <img src="{% static 'images/Logo.jpg' %}" alt="Kenya Police" class="lg-masthead-mark">
           <div class="min-w-0">
@@ -148,6 +161,20 @@
               {% endif %}
             </h1>
           </div>
+        </div>
+
+        <div class="lg-masthead-actions">
+          <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="lg-masthead-logout" aria-label="Sign out">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 17l5-5-5-5"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H3"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 5v14"/>
+              </svg>
+              <span>Sign out</span>
+            </button>
+          </form>
         </div>
       </header>
 
@@ -165,7 +192,12 @@
           </button>
           <form method="post" action="{% url 'accounts:logout' %}">
             {% csrf_token %}
-            <button class="text-xs lg-danger">Logout</button>
+            <button type="submit" class="lg-mobile-logout" aria-label="Sign out">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 17l5-5-5-5"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H3"/>
+              </svg>
+            </button>
           </form>
         </div>
       </header>
@@ -176,82 +208,37 @@
         <div class="lg-app-content-inner">
           {% if user.is_authenticated %}
           <div class="lg-workbench-shell">
-            <div class="lg-workbench-grid">
-              <section class="lg-workbench-stage">
-                <div class="lg-command-bar">
-                  <div class="min-w-0">
-                    <p class="lg-command-bar__label">Operational surface</p>
-                    <h2 class="lg-command-bar__title">
-                      {% if user.is_super_admin %}
-                        System administration and registry control
-                      {% elif user.is_commander %}
-                        Regional oversight and alert review
-                      {% else %}
-                        Station case work and local records
-                      {% endif %}
-                    </h2>
-                  </div>
-                  <div class="lg-command-bar__actions">
-                    <a href="{% url 'dashboard' %}" class="lg-command-pill {% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}">Overview</a>
-                    <a href="{% url 'cases:list' %}" class="lg-command-pill {% if 'cases' in request.path %}is-active{% endif %}">Cases</a>
-                    <a href="{% url 'stations:registry' %}" class="lg-command-pill {% if 'stations' in request.path %}is-active{% endif %}">Registry</a>
-                  </div>
+            <section class="lg-workbench-stage">
+              <div class="lg-command-bar">
+                <div class="min-w-0">
+                  <p class="lg-command-bar__label">Operational surface</p>
+                  <h2 class="lg-command-bar__title">
+                    {% if user.is_super_admin %}
+                      System administration and registry control
+                    {% elif user.is_commander %}
+                      Regional oversight and alert review
+                    {% else %}
+                      Station case work and local records
+                    {% endif %}
+                  </h2>
                 </div>
-                {% block breadcrumbs %}{% endblock %}
-                {% if messages %}
-                  <div class="mb-5 space-y-2">
-                    {% for message in messages %}
-                      <p class="lg-card px-4 py-3 text-sm" style="border-color: var(--lg-border);">{{ message }}</p>
-                    {% endfor %}
-                  </div>
-                {% endif %}
-                {% block content %}{% endblock %}
-              </section>
+                <div class="lg-command-bar__actions">
+                  <a href="{% url 'dashboard' %}" class="lg-command-pill {% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}">Overview</a>
+                  <a href="{% url 'cases:list' %}" class="lg-command-pill {% if 'cases' in request.path %}is-active{% endif %}">Cases</a>
+                  <a href="{% url 'stations:registry' %}" class="lg-command-pill {% if 'stations' in request.path %}is-active{% endif %}">Registry</a>
+                </div>
+              </div>
 
-              <aside class="lg-workbench-rail" aria-label="Operational summary">
-                <section class="lg-rail-card">
-                  <p class="lg-rail-kicker">Current posture</p>
-                  <h3 class="lg-rail-title">
-                    {% if user.is_super_admin %}
-                      Platform administration
-                    {% elif user.is_commander %}
-                      Regional command desk
-                    {% else %}
-                      Station workspace
-                    {% endif %}
-                  </h3>
-                  <p class="lg-rail-copy">
-                    {% if user.is_super_admin %}
-                      Oversees users, stations, and system recovery from a secure control surface.
-                    {% elif user.is_commander %}
-                      Reviews regional signals, escalation paths, and performance across the Coast Region.
-                    {% else %}
-                      Handles cases, suspects, and precinct records tied to the assigned station.
-                    {% endif %}
-                  </p>
-                </section>
-
-                <section class="lg-rail-card">
-                  <p class="lg-rail-kicker">Session details</p>
-                  <dl class="lg-rail-dl">
-                    <div>
-                      <dt>Badge</dt>
-                      <dd>{{ user.badge_number }}</dd>
-                    </div>
-                    <div>
-                      <dt>Role</dt>
-                      <dd>{{ user.get_role_display }}</dd>
-                    </div>
-                    {% if user.station %}
-                    <div>
-                      <dt>Station</dt>
-                      <dd>{{ user.station.code }}</dd>
-                    </div>
-                    {% endif %}
-                  </dl>
-                </section>
-              </aside>
-            </div>
+              {% block breadcrumbs %}{% endblock %}
+              {% if messages %}
+                <div class="mb-5 space-y-2">
+                  {% for message in messages %}
+                    <p class="lg-card px-4 py-3 text-sm" style="border-color: var(--lg-border);">{{ message }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              {% block content %}{% endblock %}
+            </section>
           </div>
           {% endif %}
         </div>
@@ -306,6 +293,25 @@
       });
       window.addEventListener("resize", () => {
         if (!window.matchMedia("(max-width: 767px)").matches) closeSidebar();
+      });
+
+      document.addEventListener("click", async (event) => {
+        const button = event.target.closest("[data-copy-link]");
+        if (!button) return;
+        const value = button.getAttribute("data-copy-link");
+        if (!value) return;
+        try {
+          await navigator.clipboard.writeText(value);
+          const original = button.textContent;
+          button.textContent = "Copied";
+          button.classList.add("is-copied");
+          window.setTimeout(() => {
+            button.textContent = original;
+            button.classList.remove("is-copied");
+          }, 1400);
+        } catch (error) {
+          console.error("Copy failed", error);
+        }
       });
     });
   </script>

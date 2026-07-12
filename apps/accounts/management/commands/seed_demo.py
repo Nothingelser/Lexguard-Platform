@@ -64,7 +64,16 @@ OFFICERS = [
 class Command(BaseCommand):
     help = "Seed Coast Region police stations (all known counties) and demo cases."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--password",
+            default="Lexguard123!",
+            help="Password to assign to every seeded demo officer and commander.",
+        )
+
     def handle(self, *args, **options):
+        password = options["password"]
+
         for category, value, label, weight in MO_TAGS:
             MOTagOption.objects.update_or_create(
                 category=category,
@@ -108,9 +117,8 @@ class Command(BaseCommand):
                     "must_change_password": False,
                 },
             )
-            if created:
-                user.set_password("demo1234")
-                user.save()
+            user.set_password(password)
+            user.save(update_fields=["password"])
             officer_map[station_code] = user
 
         commander, created = User.objects.update_or_create(
@@ -124,9 +132,8 @@ class Command(BaseCommand):
                 "must_change_password": False,
             },
         )
-        if created:
-            commander.set_password("demo1234")
-            commander.save()
+        commander.set_password(password)
+        commander.save(update_fields=["password"])
 
         default_officer = officer_map["MSA-MVT"]
         for station_code, case_number, title, category, location, mo in DEMO_CASES:
@@ -152,5 +159,5 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Seeded {len(DEMO_CASES)} demo cases across {len(COUNTY_STATION_COUNTS)} counties."))
         for username, _badge, station_code, first, last in OFFICERS:
             st = station_map[station_code]
-            self.stdout.write(f"  Officer ({st.county}): {username} / demo1234  ({st.code})")
-        self.stdout.write("  Regional Commander: commander / demo1234")
+            self.stdout.write(f"  Officer ({st.county}): {username} / {password}  ({st.code})")
+        self.stdout.write(f"  Regional Commander: commander / {password}")

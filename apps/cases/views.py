@@ -7,8 +7,9 @@ from django.views.decorators.http import require_http_methods
 
 from apps.accounts.permissions import enforce_write_access, require_commander, require_station_officer
 from apps.cases.forms import CaseForm, EvidenceForm, MOTagForm, SuspectLinkForm, WitnessForm
-from apps.cases.models import AuditLog, Case, CaseSuspect, CaseStatus, CrimeCategory
+from apps.cases.models import AuditLog, Case, CaseSuspect, CaseStatus, CrimeCategory, EvidenceItem
 from apps.cases.services import log_audit
+from apps.cases.storage import upload_evidence_file
 
 
 def _officer_cases(request):
@@ -156,12 +157,69 @@ def case_add_evidence(request, pk):
     enforce_write_access(request)
 
     case = get_object_or_404(Case.objects.filter(station=request.user.station), pk=pk)
-    form = EvidenceForm(request.POST)
+    form = EvidenceForm(request.POST, request.FILES)
+    saved = False
     if form.is_valid():
-        item = form.save(commit=False)
-        item.case = case
-        item.save()
-        log_audit(request.user, "add", "evidence", item.pk, f"Logged evidence for {case.case_number}")
+        try:
+            item = form.save(commit=False)
+            upload = form.cleaned_data.get("upload_file")
+            if upload:
+                item.storage_path = upload_evidence_file(case, upload)
+                item.file_size = getattr(upload, "size", None)
+            elif not item.storage_path:
+                item.storage_path = ""
+            item.uploaded_at = timezone.now()
+            item.case = case
+            item.save()
+            log_audit(request.user, "add", "evidence", item.pk, f"Logged evidence for {case.case_number}")
+            saved = True
+        except RuntimeError as exc:
+            form.add_error(None, str(exc))
+
+    if saved:
+        if request.htmx:
+            case = get_object_or_404(
+                Case.objects.prefetch_related("evidence_items"),
+                pk=case.pk,
+            )
+            return render(request, "cases/partials/evidence_list.html", {"case": case})
+        return redirect("cases:detail", pk=case.pk)
+
+    if request.htmx:
+        case = get_object_or_404(
+            Case.objects.prefetch_related("evidence_items"),
+            pk=case.pk,
+        )
+        return render(request, "cases/partials/evidence_list.html", {"case": case, "form": form})
+    return render(
+        request,
+        "cases/case_detail.html",
+        {
+            "case": get_object_or_404(
+                _officer_cases(request).prefetch_related("case_suspects__suspect", "witnesses", "evidence_items"),
+                pk=pk,
+            ),
+            "witness_form": WitnessForm(),
+            "evidence_form": form,
+            "timeline": AuditLog.objects.filter(station=case.station)
+            .filter(Q(entity="case", entity_id=str(case.pk)) | Q(detail__icontains=case.case_number))
+            .select_related("user")[:20],
+        },
+    )
+
+
+@login_required
+@require_http_methods(["POST"])
+def case_delete_evidence(request, case_pk, pk):
+    if not require_station_officer(request.user):
+        return HttpResponseForbidden("Station officers only.")
+    enforce_write_access(request)
+
+    case = get_object_or_404(Case.objects.filter(station=request.user.station), pk=case_pk)
+    evidence = get_object_or_404(EvidenceItem.objects.filter(case=case), pk=pk)
+    label = evidence.label
+    evidence.delete()
+    log_audit(request.user, "delete", "evidence", pk, f"Deleted evidence {label} from {case.case_number}")
 
     if request.htmx:
         case = get_object_or_404(

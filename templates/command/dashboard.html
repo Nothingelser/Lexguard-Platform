@@ -61,6 +61,7 @@
       <div class="lg-section-banner__title">County pressure mapping</div>
     </div>
     <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-4">Crime Distribution by County</h2>
+    <p id="countyChartEmpty" class="text-sm text-[var(--lg-muted)] hidden">No county data available yet.</p>
     <canvas id="countyChart" height="220"></canvas>
   </div>
   <div class="lg-card p-5">
@@ -68,6 +69,7 @@
       <div class="lg-section-banner__title">Pattern concentration</div>
     </div>
     <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-4">Sub-County Hotspot Intensity</h2>
+    <p id="subcountyChartEmpty" class="text-sm text-[var(--lg-muted)] hidden">No sub-county data available yet.</p>
     <canvas id="subcountyChart" height="220"></canvas>
   </div>
 </div>
@@ -156,8 +158,8 @@
 </section>
 
 <script>
-  const countyData = {{ county_json|safe }};
-  const subcountyData = {{ subcounty_json|safe }};
+  const countyData = JSON.parse('{{ county_totals_json|escapejs }}' || '{}');
+  const subcountyData = JSON.parse('{{ subcounty_totals_json|escapejs }}' || '{}');
   if (Object.keys(countyData).length) {
     Chart.defaults.color = '#64748b';
     new Chart(document.getElementById('countyChart'), {
@@ -168,6 +170,9 @@
       },
       options: { plugins: { legend: { display: false } } }
     });
+  } else {
+    document.getElementById('countyChart').classList.add('hidden');
+    document.getElementById('countyChartEmpty').classList.remove('hidden');
   }
   if (Object.keys(subcountyData).length) {
     Chart.defaults.color = '#64748b';
@@ -179,6 +184,9 @@
       },
       options: { plugins: { legend: { display: false } } }
     });
+  } else {
+    document.getElementById('subcountyChart').classList.add('hidden');
+    document.getElementById('subcountyChartEmpty').classList.remove('hidden');
   }
 </script>
 {% endblock %}

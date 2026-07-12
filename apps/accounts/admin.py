@@ -78,6 +78,22 @@ class LockAccountForm(forms.Form):
     )
 
 
+class BadgeRenumberForm(forms.Form):
+    SCOPE_CHOICES = (
+        ("all", "All personnel"),
+        ("officers", "Station officers only"),
+        ("commanders", "Regional commanders only"),
+    )
+
+    scope = forms.ChoiceField(choices=SCOPE_CHOICES, initial="all")
+    station = forms.ModelChoiceField(
+        queryset=PoliceStation.objects.filter(is_active=True).order_by("county", "name"),
+        required=False,
+        help_text="Optional when renumbering a single station or officer group.",
+    )
+    apply_changes = forms.BooleanField(required=False, label="Apply changes now")
+
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     list_display = ("username", "badge_number", "role", "station", "must_change_password", "is_active")
@@ -130,6 +146,29 @@ class UserAdmin(BaseUserAdmin):
         officer_form = OfficerProvisionForm()
         commander_form = CommanderProvisionForm()
         lock_form = LockAccountForm()
+        renumber_form = BadgeRenumberForm()
+        renumber_preview = []
+
+        def build_renumber_plan(scope, station=None):
+            plans = []
+            if scope in {"all", "officers"}:
+                officer_qs = User.objects.filter(role=User.Role.OFFICER).select_related("station").order_by("station__code", "pk")
+                if station is not None:
+                    officer_qs = officer_qs.filter(station=station)
+                counters = {}
+                for user in officer_qs:
+                    if not user.station_id:
+                        raise ValidationError(f"Officer {user.username} has no station assigned.")
+                    key = user.station_id
+                    counters[key] = counters.get(key, 0) + 1
+                    plans.append((user, f"CST-{user.station.code}-{counters[key]:04d}"))
+
+            if scope in {"all", "commanders"}:
+                commander_qs = User.objects.filter(role=User.Role.COMMANDER).order_by("pk")
+                for index, user in enumerate(commander_qs, start=1):
+                    plans.append((user, f"CST-CMD-{index:04d}"))
+
+            return plans
 
         if request.method == "POST" and "provision_officer" in request.POST:
             officer_form = OfficerProvisionForm(request.POST)
@@ -176,12 +215,49 @@ class UserAdmin(BaseUserAdmin):
                 )
                 return HttpResponseRedirect(reverse("admin:accounts_user_changelist"))
 
+        if request.method == "POST" and "renumber_badges" in request.POST:
+            renumber_form = BadgeRenumberForm(request.POST)
+            if renumber_form.is_valid():
+                scope = renumber_form.cleaned_data["scope"]
+                station = renumber_form.cleaned_data.get("station")
+                renumber_preview = build_renumber_plan(scope, station)
+
+                if renumber_form.cleaned_data.get("apply_changes"):
+                    from django.db import transaction
+
+                    with transaction.atomic():
+                        temp_prefix = "__renumber__"
+                        for index, (user, _badge) in enumerate(renumber_preview, start=1):
+                            user.username = f"{temp_prefix}{user.pk}_{index}"
+                            user.badge_number = f"{temp_prefix}{user.pk}_{index}"
+                            user.save(update_fields=["username", "badge_number"])
+
+                        for user, badge in renumber_preview:
+                            user.username = badge
+                            user.badge_number = badge
+                            user.save(update_fields=["username", "badge_number"])
+
+                    self.message_user(
+                        request,
+                        f"Updated {len(renumber_preview)} badge numbers.",
+                        level=messages.SUCCESS,
+                    )
+                    return HttpResponseRedirect(reverse("admin:accounts_user_changelist"))
+
+                self.message_user(
+                    request,
+                    f"Prepared {len(renumber_preview)} badge changes. Review the preview below, then check Apply changes and submit again.",
+                    level=messages.INFO,
+                )
+
         context = {
             **self.admin_site.each_context(request),
             "title": "Personnel Control",
             "officer_form": officer_form,
             "commander_form": commander_form,
             "lock_form": lock_form,
+            "renumber_form": renumber_form,
+            "renumber_preview": renumber_preview,
             "opts": self.model._meta,
             "has_view_permission": self.has_view_permission(request),
             "has_change_permission": self.has_change_permission(request),

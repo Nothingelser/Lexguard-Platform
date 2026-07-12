@@ -80,10 +80,19 @@
         <div class="lg-card-header">Evidence Log</div>
         <div class="p-4" id="evidence-list">{% include "cases/partials/evidence_list.html" %}</div>
         {% if user.is_station_officer and case.status != 'closed' %}
-        <form method="post" action="{% url 'cases:add_evidence' case.pk %}" hx-post="{% url 'cases:add_evidence' case.pk %}" hx-target="#evidence-list" hx-swap="innerHTML" class="p-4 border-t border-[var(--lg-border)] space-y-2">
+        {% if evidence_form.non_field_errors %}
+        <div class="px-4 pb-2 text-xs text-red-400">
+          {{ evidence_form.non_field_errors }}
+        </div>
+        {% endif %}
+        <form method="post" action="{% url 'cases:add_evidence' case.pk %}" hx-post="{% url 'cases:add_evidence' case.pk %}" hx-encoding="multipart/form-data" hx-target="#evidence-list" hx-swap="innerHTML" enctype="multipart/form-data" class="p-4 border-t border-[var(--lg-border)] space-y-2">
           {% csrf_token %}
           {{ evidence_form.label }}
           {{ evidence_form.description }}
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-[0.24em] text-[var(--lg-muted)] mb-1.5">Upload File</label>
+            {{ evidence_form.upload_file }}
+          </div>
           {{ evidence_form.storage_path }}
           <button type="submit" class="lg-btn lg-btn-primary w-full text-xs">Record Evidence</button>
         </form>
