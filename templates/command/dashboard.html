@@ -148,7 +148,7 @@
             <span>{{ row.closure_rate }}%</span>
           </div>
         </td>
-        <td>{{ row.avg_resolution }}</td>
+        <td>{{ row.avg_resolution_days|default:"-" }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="7" class="text-center py-8 text-[var(--lg-muted)]">No performance records yet.</td></tr>
