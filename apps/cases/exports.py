@@ -1,18 +1,28 @@
 """PDF and structured report generation (deterministic, no AI)."""
 
-from fpdf import FPDF
 import os
+import unicodedata
+from io import BytesIO
+
 from django.conf import settings
+from fpdf import FPDF
 
 from apps.cases.models import MOTagOption
 
 
+def _safe_text(value):
+    text = "" if value is None else str(value)
+    text = text.replace("—", "-").replace("–", "-").replace("•", "-")
+    text = unicodedata.normalize("NFKD", text)
+    return text.encode("latin-1", "replace").decode("latin-1")
+
+
 def _mo_display(mo_tags: dict) -> list[str]:
     lines = []
-    for category, value in (mo_tags or {}).items():
+    for category, value in ((mo_tags if isinstance(mo_tags, dict) else {}) or {}).items():
         option = MOTagOption.objects.filter(category=category, value=value).first()
         label = option.label if option else value
-        lines.append(f"  - {category.replace('_', ' ').title()}: {label}")
+        lines.append(f"  - {category.replace('_', ' ').title()}: {_safe_text(label)}")
     return lines or ["  (none recorded)"]
 
 
@@ -20,7 +30,8 @@ def build_case_pdf(case) -> bytes:
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-    # Try to include official logo at top if available
+
+    # Try to include official logo at top if available.
     logo_path = os.path.join(settings.BASE_DIR, "static", "images", "Logo.jpg")
     if os.path.exists(logo_path):
         try:
@@ -30,16 +41,17 @@ def build_case_pdf(case) -> bytes:
             pdf.ln(6)
     else:
         pdf.ln(6)
+
     pdf.set_font("Helvetica", "B", 16)
-    pdf.cell(0, 10, "LexGuard Case File Report", ln=True)
+    pdf.cell(0, 10, _safe_text("LexGuard Case File Report"), ln=True)
     pdf.set_font("Helvetica", "", 9)
-    pdf.cell(0, 6, "Coast Region Police — Multi-County Case File Export", ln=True)
+    pdf.cell(0, 6, _safe_text("Coast Region Police - Multi-County Case File Export"), ln=True)
     pdf.ln(4)
 
     pdf.set_font("Helvetica", "B", 12)
-    pdf.cell(0, 8, f"Case {case.case_number}", ln=True)
+    pdf.cell(0, 8, _safe_text(f"Case {case.case_number}"), ln=True)
     pdf.set_font("Helvetica", "", 10)
-    pdf.multi_cell(0, 6, case.title)
+    pdf.multi_cell(0, 6, _safe_text(case.title))
     pdf.ln(2)
 
     fields = [
@@ -56,52 +68,63 @@ def build_case_pdf(case) -> bytes:
 
     for label, value in fields:
         pdf.set_font("Helvetica", "B", 10)
-        pdf.cell(45, 6, f"{label}:")
+        pdf.cell(45, 6, _safe_text(f"{label}:"))
         pdf.set_font("Helvetica", "", 10)
-        pdf.cell(0, 6, str(value), ln=True)
+        pdf.cell(0, 6, _safe_text(value), ln=True)
 
     pdf.ln(4)
     pdf.set_font("Helvetica", "B", 11)
-    pdf.cell(0, 8, "Narrative", ln=True)
+    pdf.cell(0, 8, _safe_text("Narrative"), ln=True)
     pdf.set_font("Helvetica", "", 10)
-    pdf.multi_cell(0, 6, case.narrative)
+    pdf.multi_cell(0, 6, _safe_text(case.narrative))
 
     pdf.ln(4)
     pdf.set_font("Helvetica", "B", 11)
-    pdf.cell(0, 8, "Modus Operandi Tags", ln=True)
+    pdf.cell(0, 8, _safe_text("Modus Operandi Tags"), ln=True)
     pdf.set_font("Helvetica", "", 10)
-    for line in _mo_display(case.modus_operandi):
-        pdf.cell(0, 6, line, ln=True)
+    for line in _mo_display(getattr(case, "safe_modus_operandi", case.modus_operandi)):
+        pdf.cell(0, 6, _safe_text(line), ln=True)
 
     suspects = case.case_suspects.select_related("suspect").all()
     if suspects:
         pdf.ln(4)
         pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(0, 8, "Linked Suspects", ln=True)
+        pdf.cell(0, 8, _safe_text("Linked Suspects"), ln=True)
         pdf.set_font("Helvetica", "", 10)
         for link in suspects:
-            pdf.cell(0, 6, f"  - {link.suspect.full_name} (ID: {link.suspect.national_id}) - {link.role}", ln=True)
+            pdf.cell(
+                0,
+                6,
+                _safe_text(f"  - {link.suspect.full_name} (ID: {link.suspect.national_id}) - {link.role}"),
+                ln=True,
+            )
 
     witnesses = case.witnesses.all()
     if witnesses:
         pdf.ln(4)
         pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(0, 8, "Witnesses", ln=True)
+        pdf.cell(0, 8, _safe_text("Witnesses"), ln=True)
         pdf.set_font("Helvetica", "", 10)
         for w in witnesses:
-            pdf.cell(0, 6, f"  - {w.full_name}" + (f" ({w.contact})" if w.contact else ""), ln=True)
+            pdf.cell(0, 6, _safe_text(f"  - {w.full_name}" + (f" ({w.contact})" if w.contact else "")), ln=True)
 
     evidence = case.evidence_items.all()
     if evidence:
         pdf.ln(4)
         pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(0, 8, "Evidence Chain", ln=True)
+        pdf.cell(0, 8, _safe_text("Evidence Chain"), ln=True)
         pdf.set_font("Helvetica", "", 10)
         for item in evidence:
-            pdf.cell(0, 6, f"  - {item.label}: {item.storage_path or 'on file'}", ln=True)
+            pdf.cell(0, 6, _safe_text(f"  - {item.label}: {item.storage_path or 'on file'}"), ln=True)
 
     pdf.ln(8)
     pdf.set_font("Helvetica", "I", 8)
-    pdf.cell(0, 5, "Generated by LexGuard - Deterministic case registry export. No automated inference applied.", ln=True)
+    pdf.cell(
+        0,
+        5,
+        _safe_text("Generated by LexGuard - Deterministic case registry export. No automated inference applied."),
+        ln=True,
+    )
 
-    return pdf.output()
+    output = pdf.output(dest="S")
+    return bytes(output) if isinstance(output, (bytes, bytearray)) else output.encode("latin-1", "replace")

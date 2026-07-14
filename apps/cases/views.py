@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from apps.accounts.permissions import enforce_write_access, require_commander, require_station_officer
 from apps.cases.forms import CaseForm, EvidenceForm, MOTagForm, SuspectLinkForm, WitnessForm
 from apps.cases.models import AuditLog, Case, CaseSuspect, CaseStatus, CrimeCategory, EvidenceItem
-from apps.cases.services import log_audit
+from apps.cases.services import log_audit, next_case_number
 from apps.cases.storage import upload_evidence_file
 
 
@@ -67,6 +67,7 @@ def case_create(request):
         case = form.save(commit=False)
         case.station = request.user.station
         case.created_by = request.user
+        case.case_number = next_case_number(request.user.station)
         case.modus_operandi = mo_form.cleaned_mo_tags()
         case.save()
         log_audit(request.user, "create", "case", case.pk, f"Registered case {case.case_number}")

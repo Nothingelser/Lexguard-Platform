@@ -11,7 +11,6 @@ class CaseForm(forms.ModelForm):
     class Meta:
         model = Case
         fields = [
-            "case_number",
             "title",
             "crime_category",
             "location",
@@ -19,7 +18,6 @@ class CaseForm(forms.ModelForm):
             "status",
         ]
         widgets = {
-            "case_number": forms.TextInput(attrs={"class": INPUT_CLASS}),
             "title": forms.TextInput(attrs={"class": INPUT_CLASS}),
             "crime_category": forms.Select(attrs={"class": INPUT_CLASS}),
             "location": forms.TextInput(attrs={"class": INPUT_CLASS}),
