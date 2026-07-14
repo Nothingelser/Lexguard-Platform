@@ -96,28 +96,32 @@ def precinct_performance():
     """Compute open/closed ratios and average resolution time per station."""
     from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Q
 
-    stats = []
     from apps.stations.models import PoliceStation
 
-    for station in PoliceStation.objects.filter(is_active=True):
-        cases = Case.objects.filter(station=station)
-        total = cases.count()
-        closed = cases.filter(status="closed").count()
-        open_count = cases.exclude(status="closed").count()
-        avg_days = (
-            cases.filter(status="closed", closed_at__isnull=False)
-            .annotate(
-                duration=ExpressionWrapper(F("closed_at") - F("opened_at"), output_field=DurationField())
-            )
-            .aggregate(avg=Avg("duration"))["avg"]
+    duration_expr = ExpressionWrapper(F("cases__closed_at") - F("cases__opened_at"), output_field=DurationField())
+
+    stats = []
+    for station in (
+        PoliceStation.objects.filter(is_active=True)
+        .annotate(
+            total=Count("cases", distinct=True),
+            closed=Count("cases", filter=Q(cases__status="closed"), distinct=True),
+            open_count=Count("cases", filter=~Q(cases__status="closed"), distinct=True),
+            avg_resolution=Avg(
+                duration_expr,
+                filter=Q(cases__status="closed", cases__closed_at__isnull=False),
+            ),
         )
+        .order_by("county", "code")
+    ):
+        avg_days = station.avg_resolution
         stats.append(
             {
                 "station": station,
-                "total": total,
-                "closed": closed,
-                "open": open_count,
-                "closure_rate": round((closed / total) * 100, 1) if total else 0,
+                "total": station.total,
+                "closed": station.closed,
+                "open": station.open_count,
+                "closure_rate": round((station.closed / station.total) * 100, 1) if station.total else 0,
                 "avg_resolution_days": round(avg_days.total_seconds() / 86400, 1) if avg_days else None,
             }
         )
