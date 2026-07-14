@@ -47,9 +47,9 @@
 
     <section class="lg-card p-5">
       <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--lg-muted)] mb-3">Modus Operandi Matrix</h2>
-      {% if case.modus_operandi %}
+      {% if case.safe_modus_operandi %}
       <div class="flex flex-wrap gap-2">
-        {% for key, value in case.modus_operandi.items %}
+        {% for key, value in case.safe_modus_operandi.items %}
         <span class="mo-chip">
           <span class="mo-chip-label">{{ key }}</span>
           {% mo_label key value %}

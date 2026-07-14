@@ -5,6 +5,10 @@ from django.db.models import Count
 from apps.cases.models import Case, MOTagOption
 
 
+def _normalize_mo(payload):
+    return payload if isinstance(payload, dict) else {}
+
+
 def _tag_weights():
     weights = {}
     for option in MOTagOption.objects.filter(is_active=True):
@@ -20,8 +24,8 @@ def score_case_pair(source: Case, candidate: Case, weights: dict | None = None) 
         return 0
 
     weights = weights or _tag_weights()
-    source_mo = source.modus_operandi or {}
-    candidate_mo = candidate.modus_operandi or {}
+    source_mo = _normalize_mo(getattr(source, "safe_modus_operandi", source.modus_operandi))
+    candidate_mo = _normalize_mo(getattr(candidate, "safe_modus_operandi", candidate.modus_operandi))
 
     score = 0
     for category, value in source_mo.items():
@@ -36,10 +40,11 @@ def find_pattern_matches(source_case: Case, min_score: int = 2, limit: int = 20)
     matches = []
     candidates = (
         Case.objects.exclude(station=source_case.station)
-        .exclude(modus_operandi={})
         .select_related("station")
     )
     for candidate in candidates:
+        if not _normalize_mo(getattr(candidate, "safe_modus_operandi", candidate.modus_operandi)):
+            continue
         score = score_case_pair(source_case, candidate, weights)
         if score >= min_score:
             matches.append({"case": candidate, "score": score})
@@ -52,13 +57,14 @@ def regional_mo_alerts(min_score: int = 3, limit: int = 25):
     """Scan all open cases for cross-precinct MO linkages above a fixed threshold."""
     sources = (
         Case.objects.exclude(status="closed")
-        .exclude(modus_operandi={})
         .select_related("station")
     )
     alerts = []
     seen = set()
 
     for source in sources:
+        if not _normalize_mo(getattr(source, "safe_modus_operandi", source.modus_operandi)):
+            continue
         for match in find_pattern_matches(source, min_score=min_score, limit=5):
             pair = tuple(sorted([source.pk, match["case"].pk]))
             if pair in seen:

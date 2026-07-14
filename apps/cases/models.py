@@ -104,3 +104,10 @@ class AuditLog(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+def _safe_modus_operandi(self):
+    return self.modus_operandi if isinstance(self.modus_operandi, dict) else {}
+
+
+Case.safe_modus_operandi = property(_safe_modus_operandi)
