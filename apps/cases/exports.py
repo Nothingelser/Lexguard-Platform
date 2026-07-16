@@ -55,6 +55,10 @@ def _section_header(pdf: FPDF, title: str) -> None:
     pdf.ln(4)
 
 
+def _content_width(pdf: FPDF) -> float:
+    return max(40, pdf.w - pdf.l_margin - pdf.r_margin)
+
+
 def _display_or_value(obj, method_name: str, fallback: str) -> str:
     method = getattr(obj, method_name, None)
     if callable(method):
@@ -77,7 +81,8 @@ def _timestamp(value) -> str:
 
 
 def _append_line(pdf: FPDF, text: str) -> None:
-    pdf.multi_cell(0, 6, _safe_text(text))
+    pdf.set_x(pdf.l_margin)
+    pdf.multi_cell(_content_width(pdf), 6, _safe_text(text))
 
 
 def _build_simple_case_pdf(case) -> bytes:
@@ -278,13 +283,13 @@ def build_case_pdf(case) -> bytes:
         _section_header(pdf, "Narrative")
         pdf.set_font("Helvetica", "", 10)
         pdf.set_text_color(30, 41, 59)
-        pdf.multi_cell(0, 6, _safe_text(getattr(case, "narrative", "") or "No narrative recorded."))
+        _append_line(pdf, getattr(case, "narrative", "") or "No narrative recorded.")
 
         pdf.ln(1)
         _section_header(pdf, "Modus Operandi Tags")
         pdf.set_font("Helvetica", "", 10)
         for line in _mo_display(getattr(case, "safe_modus_operandi", getattr(case, "modus_operandi", {}))):
-            pdf.multi_cell(0, 6, _safe_text(f"- {line}"))
+            _append_line(pdf, f"- {line}")
 
         suspects = getattr(case, "case_suspects", None)
         if suspects:
@@ -294,7 +299,7 @@ def build_case_pdf(case) -> bytes:
                 _section_header(pdf, "Linked Suspects")
                 pdf.set_font("Helvetica", "", 10)
                 for link in suspects:
-                    pdf.multi_cell(0, 6, _safe_text(f"- {link.suspect.full_name} (ID: {link.suspect.national_id}) - {link.role}"))
+                    _append_line(pdf, f"- {link.suspect.full_name} (ID: {link.suspect.national_id}) - {link.role}")
 
         witnesses = getattr(case, "witnesses", None)
         if witnesses:
@@ -305,7 +310,7 @@ def build_case_pdf(case) -> bytes:
                 pdf.set_font("Helvetica", "", 10)
                 for witness in witnesses:
                     contact = f" ({witness.contact})" if witness.contact else ""
-                    pdf.multi_cell(0, 6, _safe_text(f"- {witness.full_name}{contact}"))
+                    _append_line(pdf, f"- {witness.full_name}{contact}")
 
         evidence = getattr(case, "evidence_items", None)
         if evidence:
@@ -315,7 +320,7 @@ def build_case_pdf(case) -> bytes:
                 _section_header(pdf, "Evidence Chain")
                 pdf.set_font("Helvetica", "", 10)
                 for item in evidence:
-                    pdf.multi_cell(0, 6, _safe_text(f"- {item.label}: {item.storage_path or 'on file'}"))
+                    _append_line(pdf, f"- {item.label}: {item.storage_path or 'on file'}")
 
         pdf.ln(4)
         pdf.set_font("Helvetica", "I", 8)
