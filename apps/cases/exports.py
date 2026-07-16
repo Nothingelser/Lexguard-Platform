@@ -187,18 +187,19 @@ def build_case_pdf(case) -> bytes:
         pdf.set_text_color(71, 85, 105)
         pdf.cell(0, 5.5, _safe_text("Coast Region Police - Multi-County Case File Export"), ln=True)
 
-        badge_w = 50
+        badge_w = 56
         badge_x = pdf.w - pdf.r_margin - badge_w
         badge_y = header_y + 7
         pdf.set_fill_color(25, 43, 69)
         pdf.set_text_color(255, 255, 255)
         pdf.set_draw_color(25, 43, 69)
         pdf.rect(badge_x, badge_y, badge_w, 19, style="DF")
-        pdf.set_xy(badge_x + 2, badge_y + 2.5)
         pdf.set_font("Helvetica", "B", 7.5)
-        pdf.cell(badge_w - 4, 4, _safe_text("CASE NO."), align="C", ln=True)
+        pdf.text(badge_x + 17, badge_y + 6, _safe_text("CASE NO."))
         pdf.set_font("Helvetica", "B", 10)
-        pdf.cell(badge_w - 4, 6, _safe_text(case.case_number), align="C", ln=True)
+        case_no_text = _safe_text(case.case_number)
+        case_no_width = pdf.get_string_width(case_no_text)
+        pdf.text(badge_x + (badge_w - case_no_width) / 2, badge_y + 14, case_no_text)
 
         pdf.set_y(header_y + header_h + 8)
         pdf.set_font("Helvetica", "B", 12)
