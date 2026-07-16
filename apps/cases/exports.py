@@ -2,7 +2,6 @@
 
 import os
 import unicodedata
-from datetime import datetime
 
 from django.conf import settings
 from django.utils import timezone
@@ -21,7 +20,7 @@ class LexGuardPDF(FPDF):
 
 def _safe_text(value):
     text = "" if value is None else str(value)
-    text = text.replace("â€”", "-").replace("â€“", "-").replace("â€¢", "-")
+    text = text.replace("\u2014", "-").replace("\u2013", "-").replace("\u2022", "-")
     text = unicodedata.normalize("NFKD", text)
     return text.encode("latin-1", "replace").decode("latin-1")
 
@@ -53,25 +52,14 @@ def _section_header(pdf: FPDF, title: str) -> None:
     pdf.ln(4)
 
 
-def _draw_kv(pdf: FPDF, label: str, value: str) -> None:
-    label_width = 42
-    pdf.set_font("Helvetica", "B", 9.5)
-    pdf.set_text_color(56, 63, 74)
-    pdf.cell(label_width, 6.5, _safe_text(f"{label}:"), border=0)
-    pdf.set_font("Helvetica", "", 9.5)
-    pdf.set_text_color(30, 41, 59)
-    pdf.multi_cell(0, 6.5, _safe_text(value))
-
-
 def build_case_pdf(case) -> bytes:
-    pdf = LexGuardPDF()
+    pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.set_margins(14, 14, 14)
     pdf.add_page()
 
     logo_path = os.path.join(settings.BASE_DIR, "static", "images", "Logo.jpg")
 
-    # Header band
     header_y = 14
     header_h = 34
     header_x = pdf.l_margin
@@ -86,7 +74,6 @@ def build_case_pdf(case) -> bytes:
         except Exception:
             pass
 
-    # Title block
     pdf.set_xy(39, 18)
     pdf.set_font("Helvetica", "B", 16)
     pdf.set_text_color(15, 23, 42)
@@ -96,7 +83,6 @@ def build_case_pdf(case) -> bytes:
     pdf.set_text_color(71, 85, 105)
     pdf.cell(0, 5.5, _safe_text("Coast Region Police - Multi-County Case File Export"), ln=True)
 
-    # Case badge
     badge_w = 38
     badge_x = pdf.w - pdf.r_margin - badge_w
     badge_y = header_y + 7
@@ -121,7 +107,6 @@ def build_case_pdf(case) -> bytes:
     pdf.cell(0, 5, _safe_text(f"Opened {opened_stamp}"), ln=True)
     pdf.ln(2)
 
-    # Overview card
     card_x = pdf.l_margin
     card_y = pdf.get_y()
     card_w = pdf.w - pdf.l_margin - pdf.r_margin
@@ -139,7 +124,6 @@ def build_case_pdf(case) -> bytes:
     pdf.line(card_x + 4, pdf.get_y(), card_x + card_w - 4, pdf.get_y())
     pdf.ln(2.5)
 
-    # Two-column detail grid
     left_x = card_x + 4
     right_x = card_x + card_w / 2 + 2
     field_w = card_w / 2 - 8
@@ -205,7 +189,6 @@ def build_case_pdf(case) -> bytes:
         pdf.multi_cell(field_w - 38, 6, _safe_text(timezone.localtime(case.closed_at).strftime("%Y-%m-%d %H:%M")))
 
     pdf.ln(6)
-
     _section_header(pdf, "Narrative")
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(30, 41, 59)
@@ -223,11 +206,7 @@ def build_case_pdf(case) -> bytes:
         _section_header(pdf, "Linked Suspects")
         pdf.set_font("Helvetica", "", 10)
         for link in suspects:
-            pdf.multi_cell(
-                0,
-                6,
-                _safe_text(f"- {link.suspect.full_name} (ID: {link.suspect.national_id}) - {link.role}"),
-            )
+            pdf.multi_cell(0, 6, _safe_text(f"- {link.suspect.full_name} (ID: {link.suspect.national_id}) - {link.role}"))
 
     witnesses = case.witnesses.all()
     if witnesses:
