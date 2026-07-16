@@ -85,6 +85,25 @@ def _append_line(pdf: FPDF, text: str) -> None:
     pdf.multi_cell(_content_width(pdf), 6, _safe_text(text))
 
 
+def _overview_block(pdf: FPDF, label: str, value: str, *, pill: bool = False, fill=None, text=None) -> None:
+    pdf.set_x(pdf.l_margin + 4)
+    pdf.set_font("Helvetica", "B", 9.5)
+    pdf.set_text_color(56, 63, 74)
+    pdf.cell(0, 5, _safe_text(label), ln=True)
+
+    pdf.set_x(pdf.l_margin + 4)
+    if pill and fill and text:
+        pdf.set_fill_color(*fill)
+        pdf.set_text_color(*text)
+        pdf.set_font("Helvetica", "B", 9.5)
+        pdf.cell(30, 6.5, _safe_text(value), fill=True, ln=True)
+    else:
+        pdf.set_font("Helvetica", "", 9.5)
+        pdf.set_text_color(30, 41, 59)
+        pdf.multi_cell(_content_width(pdf) - 8, 5.8, _safe_text(value))
+    pdf.ln(1.5)
+
+
 def _build_simple_case_pdf(case) -> bytes:
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -168,18 +187,18 @@ def build_case_pdf(case) -> bytes:
         pdf.set_text_color(71, 85, 105)
         pdf.cell(0, 5.5, _safe_text("Coast Region Police - Multi-County Case File Export"), ln=True)
 
-        badge_w = 38
+        badge_w = 50
         badge_x = pdf.w - pdf.r_margin - badge_w
         badge_y = header_y + 7
         pdf.set_fill_color(25, 43, 69)
         pdf.set_text_color(255, 255, 255)
         pdf.set_draw_color(25, 43, 69)
         pdf.rect(badge_x, badge_y, badge_w, 19, style="DF")
-        pdf.set_xy(badge_x, badge_y + 2.5)
-        pdf.set_font("Helvetica", "B", 8)
-        pdf.cell(badge_w, 4, _safe_text("CASE NO."), align="C", ln=True)
-        pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(badge_w, 6, _safe_text(case.case_number), align="C", ln=True)
+        pdf.set_xy(badge_x + 2, badge_y + 2.5)
+        pdf.set_font("Helvetica", "B", 7.5)
+        pdf.cell(badge_w - 4, 4, _safe_text("CASE NO."), align="C", ln=True)
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.cell(badge_w - 4, 6, _safe_text(case.case_number), align="C", ln=True)
 
         pdf.set_y(header_y + header_h + 8)
         pdf.set_font("Helvetica", "B", 12)
@@ -195,7 +214,7 @@ def build_case_pdf(case) -> bytes:
         card_x = pdf.l_margin
         card_y = pdf.get_y()
         card_w = pdf.w - pdf.l_margin - pdf.r_margin
-        card_h = 46
+        card_h = 88
         pdf.set_draw_color(225, 232, 240)
         pdf.set_fill_color(248, 250, 252)
         pdf.rect(card_x, card_y, card_w, card_h, style="DF")
@@ -207,79 +226,23 @@ def build_case_pdf(case) -> bytes:
         pdf.cell(0, 5.5, _safe_text("Case Overview"), ln=True)
         pdf.set_draw_color(230, 236, 244)
         pdf.line(card_x + 4, pdf.get_y(), card_x + card_w - 4, pdf.get_y())
-        pdf.ln(2.5)
-
-        left_x = card_x + 4
-        right_x = card_x + card_w / 2 + 2
-        field_w = card_w / 2 - 8
+        pdf.ln(3)
 
         station = getattr(case, "station", None)
         created_by = getattr(case, "created_by", None)
         crime_category = _display_or_value(case, "get_crime_category_display", getattr(case, "crime_category", "N/A"))
         status_display = _display_or_value(case, "get_status_display", getattr(case, "status", "N/A"))
         lead_officer = f"{_display_or_value(created_by, 'get_full_name', 'N/A')} ({getattr(created_by, 'badge_number', 'N/A')})"
-
-        pdf.set_xy(left_x, pdf.get_y())
-        pdf.set_font("Helvetica", "B", 9.5)
-        pdf.set_text_color(56, 63, 74)
-        pdf.cell(38, 6, _safe_text("Station:"), ln=False)
-        pdf.set_font("Helvetica", "", 9.5)
-        pdf.set_text_color(30, 41, 59)
-        pdf.multi_cell(field_w - 38, 6, _safe_text(f"{getattr(station, 'code', 'N/A')} - {getattr(station, 'name', 'N/A')}"))
-
-        pdf.set_xy(right_x, pdf.get_y() - 6)
-        pdf.set_font("Helvetica", "B", 9.5)
-        pdf.set_text_color(56, 63, 74)
-        pdf.cell(38, 6, _safe_text("County:"), ln=False)
-        pdf.set_font("Helvetica", "", 9.5)
-        pdf.set_text_color(30, 41, 59)
-        pdf.multi_cell(field_w - 38, 6, _safe_text(f"{getattr(station, 'county', 'N/A')} / {getattr(station, 'sub_county', 'N/A') or 'N/A'}"))
-
-        current_y = pdf.get_y()
-        pdf.set_xy(left_x, current_y)
-        pdf.set_font("Helvetica", "B", 9.5)
-        pdf.set_text_color(56, 63, 74)
-        pdf.cell(38, 6, _safe_text("Location:"), ln=False)
-        pdf.set_font("Helvetica", "", 9.5)
-        pdf.set_text_color(30, 41, 59)
-        pdf.multi_cell(field_w - 38, 6, _safe_text(getattr(case, "location", "")))
-
-        pdf.set_xy(right_x, pdf.get_y() - 6)
-        pdf.set_font("Helvetica", "B", 9.5)
-        pdf.set_text_color(56, 63, 74)
-        pdf.cell(38, 6, _safe_text("Category:"), ln=False)
-        pdf.set_font("Helvetica", "", 9.5)
-        pdf.set_text_color(30, 41, 59)
-        pdf.multi_cell(field_w - 38, 6, _safe_text(crime_category))
-
-        current_y = pdf.get_y()
-        pdf.set_xy(left_x, current_y)
-        pdf.set_font("Helvetica", "B", 9.5)
-        pdf.set_text_color(56, 63, 74)
-        pdf.cell(38, 6, _safe_text("Status:"), ln=False)
-        pdf.set_font("Helvetica", "B", 9.5)
-        pdf.set_fill_color(*status_fill)
-        pdf.set_text_color(*status_text)
-        pdf.cell(28, 6, _safe_text(status_display), fill=True)
-
-        pdf.set_xy(right_x, pdf.get_y() - 6)
-        pdf.set_font("Helvetica", "B", 9.5)
-        pdf.set_text_color(56, 63, 74)
-        pdf.cell(38, 6, _safe_text("Lead Officer:"), ln=False)
-        pdf.set_font("Helvetica", "", 9.5)
-        pdf.set_text_color(30, 41, 59)
-        pdf.multi_cell(field_w - 38, 6, _safe_text(lead_officer))
-
+        _overview_block(pdf, "Station", f"{getattr(station, 'code', 'N/A')} - {getattr(station, 'name', 'N/A')}")
+        _overview_block(pdf, "County / Sub-County", f"{getattr(station, 'county', 'N/A')} / {getattr(station, 'sub_county', 'N/A') or 'N/A'}")
+        _overview_block(pdf, "Location", getattr(case, "location", ""))
+        _overview_block(pdf, "Category", crime_category)
+        _overview_block(pdf, "Status", status_display, pill=True, fill=status_fill, text=status_text)
+        _overview_block(pdf, "Lead Officer", lead_officer)
         if getattr(case, "closed_at", None):
-            pdf.set_xy(left_x, pdf.get_y())
-            pdf.set_font("Helvetica", "B", 9.5)
-            pdf.set_text_color(56, 63, 74)
-            pdf.cell(38, 6, _safe_text("Closed:"), ln=False)
-            pdf.set_font("Helvetica", "", 9.5)
-            pdf.set_text_color(30, 41, 59)
-            pdf.multi_cell(field_w - 38, 6, _safe_text(_timestamp(case.closed_at)))
+            _overview_block(pdf, "Closed", _timestamp(case.closed_at))
 
-        pdf.ln(6)
+        pdf.set_y(card_y + card_h + 6)
         _section_header(pdf, "Narrative")
         pdf.set_font("Helvetica", "", 10)
         pdf.set_text_color(30, 41, 59)
