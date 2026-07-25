@@ -1,8 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
-
 /* Default light theme variables (will be overridden by dark-mode/light-mode classes and @media) */
 :root {
+  --lg-font-sans: "Segoe UI", "Aptos", "Calibri", "Helvetica Neue", Arial, sans-serif;
+  --lg-font-mono: Consolas, "Liberation Mono", "Courier New", monospace;
   --brand-light: #F4F0E8;
   --brand-dark: #152238;
   --page-pattern: radial-gradient(circle at 1px 1px, rgba(22, 34, 56, 0.06) 1px, transparent 0);
@@ -21,21 +20,32 @@
 }
 
 * {
-  font-family: "Inter", system-ui, sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6,
-.lg-display,
-.lg-brand-title,
-.lg-panel-title {
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: var(--lg-font-sans) !important;
 }
 
 .lg-mono,
 .lg-kicker,
 .lg-chip,
 .lg-stat-label {
-  font-family: "IBM Plex Mono", "Inter", monospace;
+  font-family: var(--lg-font-mono) !important;
+}
+
+code,
+kbd,
+pre,
+samp,
+.font-mono {
+  font-family: var(--lg-font-mono) !important;
+}
+
+html,
+body,
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: var(--lg-font-sans) !important;
 }
 
 body {
