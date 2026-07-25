@@ -4053,6 +4053,100 @@ body.light-mode .lg-auth-copy h1 {
   color: #f8fbff !important;
 }
 
+/* Typography and surface polish for a less over-styled, more institutional feel. */
+html {
+  font-size: 15.5px;
+}
+
+body {
+  letter-spacing: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.01em;
+  font-weight: 650;
+  text-transform: none;
+}
+
+.lg-sidebar-eyebrow,
+.lg-sidebar-section-title,
+.lg-sidebar-status-row,
+.lg-sidebar-user-action,
+.lg-masthead-kicker,
+.lg-record-strip__label,
+.lg-ledger-banner__label,
+.lg-section-banner__title,
+.lg-command-bar__label,
+.lg-panel-kicker,
+.lg-section-label,
+.lg-auth-brand-text em,
+.lg-auth-status,
+.lg-auth-kicker,
+.lg-auth-card-kicker,
+.lg-auth-label,
+.lg-auth-pill,
+.lg-auth-card-state,
+.lg-auth-card-foot,
+.lg-auth-note span,
+.lg-pill,
+.lg-chip,
+.lg-hero-pill,
+.lg-ledger-chip,
+.lg-command-pill,
+.lg-filter-pill,
+.lg-masthead-chip span {
+  text-transform: none;
+  letter-spacing: 0.06em;
+}
+
+.lg-card,
+.lg-stat-card,
+.lg-rail-card,
+.lg-hero-aside-card,
+.lg-page-hero,
+.lg-workbench-stage,
+.lg-auth-card,
+.lg-masthead,
+.lg-record-strip,
+.lg-ledger-banner,
+.lg-section-banner,
+.lg-sidebar-brand-link,
+.lg-sidebar-status,
+.lg-sidebar-footer {
+  border-radius: 0.65rem;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.04);
+}
+
+.lg-btn,
+.lg-btn-primary,
+.lg-btn-secondary,
+.lg-btn-success,
+.lg-filter-pill,
+.lg-command-pill,
+.lg-ledger-chip,
+.lg-hero-pill,
+.lg-pill,
+.lg-auth-pill,
+.lg-masthead-logout {
+  border-radius: 0.55rem;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+.lg-card-header,
+.lg-sidebar-brand-link,
+.lg-masthead,
+.lg-ledger-banner,
+.lg-page-hero,
+.lg-record-strip {
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.03);
+}
+
+.lg-auth-copy h1 {
+  letter-spacing: -0.025em;
+}
+
 @media (max-width: 1100px) {
   body.light-mode .lg-auth-canvas::after {
     inset: 0 0 auto;
