@@ -49,9 +49,9 @@ class CommanderDashboardTests(TestCase):
 
         self.assertEqual(home_response.status_code, 200)
         self.assertContains(home_response, "Commander Dashboard")
-        self.assertContains(home_response, "Commander Home")
-        self.assertNotContains(home_response, "Regional Command Console")
+        self.assertContains(home_response, "Regional Oversight Surface")
+        self.assertNotContains(home_response, "Cross-County MO Linkage Alerts")
 
         self.assertEqual(command_response.status_code, 200)
         self.assertContains(command_response, "Regional Command Console")
-        self.assertNotContains(command_response, "Commander Home")
+        self.assertContains(command_response, "Regional Geospatial Hotspots")
