@@ -110,29 +110,6 @@ class UserAdmin(BaseUserAdmin):
     )
     change_list_template = "admin/accounts/user/change_list.html"
 
-    def _build_access_rows(self):
-        users = (
-            User.objects.select_related("station")
-            .prefetch_related("groups", "user_permissions__content_type")
-            .order_by("role", "badge_number", "username")
-        )
-        rows = []
-        for user in users:
-            rows.append(
-                {
-                    "user": user,
-                    "groups": list(user.groups.all().order_by("name")),
-                    "direct_permissions": list(
-                        user.user_permissions.select_related("content_type").order_by(
-                            "content_type__app_label",
-                            "codename",
-                        )
-                    ),
-                    "effective_permissions": sorted(user.get_all_permissions()),
-                }
-            )
-        return rows
-
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
@@ -171,7 +148,6 @@ class UserAdmin(BaseUserAdmin):
         lock_form = LockAccountForm()
         renumber_form = BadgeRenumberForm()
         renumber_preview = []
-        access_grants = self._build_access_rows()
 
         def build_renumber_plan(scope, station=None):
             plans = []
@@ -282,7 +258,6 @@ class UserAdmin(BaseUserAdmin):
             "lock_form": lock_form,
             "renumber_form": renumber_form,
             "renumber_preview": renumber_preview,
-            "access_grants": access_grants,
             "opts": self.model._meta,
             "has_view_permission": self.has_view_permission(request),
             "has_change_permission": self.has_change_permission(request),

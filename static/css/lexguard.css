@@ -316,63 +316,6 @@ body.sidebar-open {
   padding: 0.1rem 0 0.2rem;
 }
 
-.lg-sidebar-access {
-  display: grid;
-  gap: 0.55rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid rgba(184, 134, 11, 0.12);
-}
-
-.lg-sidebar-access-block {
-  display: grid;
-  gap: 0.35rem;
-}
-
-.lg-sidebar-access-label {
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.56rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(248, 250, 252, 0.62);
-}
-
-.lg-sidebar-access-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.lg-sidebar-access-group {
-  display: grid;
-  gap: 0.28rem;
-}
-
-.lg-sidebar-access-group-label {
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.55rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(248, 250, 252, 0.42);
-}
-
-.lg-sidebar-access-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.24rem 0.5rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(184, 134, 11, 0.18);
-  background: rgba(255, 255, 255, 0.04);
-  color: #f8fafc;
-  font-size: 0.58rem;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.lg-sidebar-access-empty {
-  font-size: 0.68rem;
-  color: rgba(248, 250, 252, 0.58);
-}
-
 .lg-masthead {
   display: flex;
   align-items: center;

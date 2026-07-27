@@ -1,5 +1,4 @@
 {% extends "admin/base_site.html" %}
-{% load permission_tags %}
 
 {% block content %}
 <div class="module">
@@ -47,74 +46,6 @@
       <input type="submit" value="Lock Account">
     </div>
   </form>
-</div>
-
-<div class="module">
-  <h2>Access Grants</h2>
-  <p>Use this register to confirm which Django groups and direct permissions are actually assigned to each account.</p>
-  <p>The app shell also shows the current user's active grants so commanders can see what changed after super-admin review.</p>
-
-  <table class="listing" style="width: 100%; margin-top: 1rem;">
-    <thead>
-      <tr>
-        <th align="left">User</th>
-        <th align="left">Role</th>
-        <th align="left">Groups</th>
-        <th align="left">Direct permissions</th>
-        <th align="left">Effective grants</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in access_grants %}
-      <tr>
-        <td>
-          <strong>{{ row.user.get_full_name|default:row.user.username }}</strong><br>
-          <span style="color: #888;">{{ row.user.badge_number }}</span>
-        </td>
-        <td>{{ row.user.get_role_display }}</td>
-        <td>
-          {% if row.groups %}
-            <ul style="margin: 0; padding-left: 1rem;">
-              {% for group in row.groups %}
-                <li>{{ group.name }}</li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <span style="color: #888;">None</span>
-          {% endif %}
-        </td>
-        <td>
-          {% if row.direct_permissions %}
-            {% regroup row.direct_permissions by content_type.app_label as direct_permission_groups %}
-            <div style="display: grid; gap: 0.55rem;">
-              {% for group in direct_permission_groups %}
-                <div style="display: grid; gap: 0.25rem;">
-                  <div style="font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #374151;">
-                    {{ group.grouper|permission_family }}
-                  </div>
-                  <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-                    {% for permission in group.list %}
-                      <span class="lg-sidebar-access-chip" style="color: #1f2937; border-color: rgba(15, 23, 42, 0.14); background: rgba(59, 130, 246, 0.06);">
-                        {{ permission|permission_label }}
-                      </span>
-                    {% endfor %}
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-          {% else %}
-            <span style="color: #888;">None</span>
-          {% endif %}
-        </td>
-        <td>{{ row.effective_permissions|length }}</td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="5">No users found.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
 </div>
 
 <div class="module">

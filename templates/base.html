@@ -1,4 +1,4 @@
-{% load static permission_tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -138,42 +138,6 @@
             {% endif %}
           </dl>
           <a href="{% url 'accounts:password_change' %}" class="lg-sidebar-user-action">Change password</a>
-
-          {% with user_groups=user.groups.all user_permissions=user.user_permissions.all %}
-          {% if user_groups or user_permissions %}
-          <div class="lg-sidebar-access">
-            <p class="lg-sidebar-section-title">Access grants</p>
-
-            <div class="lg-sidebar-access-block">
-              <p class="lg-sidebar-access-label">Groups</p>
-              <div class="lg-sidebar-access-list">
-                {% for group in user_groups %}
-                  <span class="lg-sidebar-access-chip">{{ group.name }}</span>
-                {% empty %}
-                  <span class="lg-sidebar-access-empty">None assigned</span>
-                {% endfor %}
-              </div>
-            </div>
-
-            <div class="lg-sidebar-access-block">
-              <p class="lg-sidebar-access-label">Direct permissions</p>
-              {% regroup user_permissions by content_type.app_label as permission_groups %}
-              {% for group in permission_groups %}
-                <div class="lg-sidebar-access-group">
-                  <span class="lg-sidebar-access-group-label">{{ group.grouper|permission_family }}</span>
-                  <div class="lg-sidebar-access-list">
-                    {% for permission in group.list %}
-                      <span class="lg-sidebar-access-chip">{{ permission|permission_label }}</span>
-                    {% endfor %}
-                  </div>
-                </div>
-              {% empty %}
-                <span class="lg-sidebar-access-empty">No direct permissions</span>
-              {% endfor %}
-            </div>
-          </div>
-          {% endif %}
-          {% endwith %}
         </div>
 
       </div>
