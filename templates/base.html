@@ -7,7 +7,7 @@
   <title>{% block title %}LexGuard{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/tailwind.css' %}?v=20260714a">
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-  <link rel="stylesheet" href="{% static 'css/lexguard.css' %}?v=20260727a">
+  <link rel="stylesheet" href="{% static 'css/lexguard.css' %}?v=20260727b">
   {% block extra_head %}{% endblock %}
 </head>
 <body class="min-h-screen">
@@ -138,6 +138,36 @@
             {% endif %}
           </dl>
           <a href="{% url 'accounts:password_change' %}" class="lg-sidebar-user-action">Change password</a>
+
+          {% with user_groups=user.groups.all user_permissions=user.user_permissions.all %}
+          {% if user_groups or user_permissions %}
+          <div class="lg-sidebar-access">
+            <p class="lg-sidebar-section-title">Access grants</p>
+
+            <div class="lg-sidebar-access-block">
+              <p class="lg-sidebar-access-label">Groups</p>
+              <div class="lg-sidebar-access-list">
+                {% for group in user_groups %}
+                  <span class="lg-sidebar-access-chip">{{ group.name }}</span>
+                {% empty %}
+                  <span class="lg-sidebar-access-empty">None assigned</span>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="lg-sidebar-access-block">
+              <p class="lg-sidebar-access-label">Direct permissions</p>
+              <div class="lg-sidebar-access-list">
+                {% for permission in user_permissions %}
+                  <span class="lg-sidebar-access-chip">{{ permission.content_type.app_label }}.{{ permission.codename }}</span>
+                {% empty %}
+                  <span class="lg-sidebar-access-empty">No direct permissions</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          {% endwith %}
         </div>
 
       </div>
