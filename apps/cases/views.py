@@ -50,7 +50,7 @@ def case_list(request):
         "status_choices": CaseStatus.choices,
         "category_choices": CrimeCategory.choices,
     }
-    template = "cases/partials/case_table.html" if request.htmx else "cases/case_list.html"
+    template = "cases/partials/case_list_shell.html" if request.htmx else "cases/case_list.html"
     return render(request, template, context)
 
 

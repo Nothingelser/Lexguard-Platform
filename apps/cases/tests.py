@@ -119,3 +119,16 @@ class CaseRegistrationAndExportTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/pdf")
         self.assertTrue(response.content.startswith(b"%PDF"))
+
+    def test_case_list_htmx_status_filter_marks_active_pill(self):
+        self.client.force_login(self.officer)
+
+        response = self.client.get(
+            reverse("cases:list"),
+            {"status": "open"},
+            HTTP_HX_REQUEST="true",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="lg-filter-pill active"')
+        self.assertContains(response, ">Open<")
