@@ -13,6 +13,16 @@ def require_commander(user):
     return user.is_commander
 
 
+def can_add_case(user):
+    if not user.is_authenticated:
+        return False
+    return bool(
+        user.is_super_admin
+        or user.is_station_officer
+        or user.has_perm("cases.add_case")
+    )
+
+
 class TenantQuerySetMixin:
     """Restrict queryset to the officer's home station unless commander (read-only all)."""
 

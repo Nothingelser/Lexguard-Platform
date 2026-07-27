@@ -14,10 +14,12 @@
     <h1 class="lg-page-hero-title">{{ station.name }}</h1>
     <p class="lg-page-hero-copy">{{ station.region }} Region &middot; {{ station.county }} County &middot; {{ station.code }}. Local case intake, audit trace, and station-level control.</p>
     <div class="lg-page-hero-actions">
+      {% if perms.cases.add_case %}
       <a href="{% url 'cases:create' %}" class="lg-btn lg-btn-primary">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
         Register Case
       </a>
+      {% endif %}
       <span class="lg-hero-pill">Station-owned data</span>
       <span class="lg-hero-pill">Audit logged</span>
     </div>

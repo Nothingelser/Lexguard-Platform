@@ -5,8 +5,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from apps.accounts.permissions import enforce_write_access, require_commander, require_station_officer
-from apps.cases.forms import CaseForm, EvidenceForm, MOTagForm, SuspectLinkForm, WitnessForm
+from apps.accounts.permissions import can_add_case, enforce_write_access, require_commander, require_station_officer
+from apps.cases.forms import CaseIntakeForm, EvidenceForm, MOTagForm, SuspectLinkForm, WitnessForm
 from apps.cases.models import AuditLog, Case, CaseSuspect, CaseStatus, CrimeCategory, EvidenceItem
 from apps.cases.services import log_audit, next_case_number
 from apps.cases.storage import upload_evidence_file
@@ -57,23 +57,36 @@ def case_list(request):
 @login_required
 @require_http_methods(["GET", "POST"])
 def case_create(request):
-    if not require_station_officer(request.user):
+    if not can_add_case(request.user):
         return HttpResponseForbidden("Station officers only.")
 
-    form = CaseForm(request.POST or None)
+    include_station = not request.user.is_station_officer
+    form = CaseIntakeForm(request.POST or None, include_station=include_station)
     mo_form = MOTagForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid() and mo_form.is_valid():
         case = form.save(commit=False)
-        case.station = request.user.station
-        case.created_by = request.user
-        case.case_number = next_case_number(request.user.station)
-        case.modus_operandi = mo_form.cleaned_mo_tags()
-        case.save()
-        log_audit(request.user, "create", "case", case.pk, f"Registered case {case.case_number}")
-        return redirect("cases:detail", pk=case.pk)
+        case.station = request.user.station if request.user.is_station_officer else form.cleaned_data.get("station")
+        if not case.station:
+            form.add_error("station", "Select a station for this case.")
+        else:
+            case.created_by = request.user
+            case.case_number = next_case_number(case.station)
+            case.modus_operandi = mo_form.cleaned_mo_tags()
+            case.save()
+            log_audit(request.user, "create", "case", case.pk, f"Registered case {case.case_number}")
+            return redirect("cases:detail", pk=case.pk)
 
-    return render(request, "cases/case_form.html", {"form": form, "mo_form": mo_form})
+    return render(
+        request,
+        "cases/case_form.html",
+        {
+            "form": form,
+            "mo_form": mo_form,
+            "include_station": include_station,
+            "can_add_case": can_add_case(request.user),
+        },
+    )
 
 
 @login_required

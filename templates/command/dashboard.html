@@ -18,6 +18,9 @@
       <a href="{% url 'analytics:alerts' %}" class="lg-btn lg-btn-primary">
         MO Alerts {% if alert_count %}<span class="lg-badge px-2 py-0.5 rounded-full text-xs">{{ alert_count }}</span>{% endif %}
       </a>
+      {% if perms.cases.add_case %}
+      <a href="{% url 'cases:create' %}" class="lg-btn lg-btn-secondary">Open Case Entry</a>
+      {% endif %}
       <a href="{% url 'analytics:export_csv' %}" class="lg-btn lg-btn-secondary">Export CSV</a>
       <a href="{% url 'analytics:export_excel' %}" class="lg-btn lg-btn-secondary">Export Excel</a>
     </div>

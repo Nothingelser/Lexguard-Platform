@@ -26,6 +26,20 @@ class CaseForm(forms.ModelForm):
         }
 
 
+class CaseIntakeForm(CaseForm):
+    station = forms.ModelChoiceField(
+        queryset=Case._meta.get_field("station").remote_field.model.objects.filter(is_active=True).order_by("county", "name"),
+        required=False,
+        label="Station",
+        widget=forms.Select(attrs={"class": INPUT_CLASS}),
+    )
+
+    def __init__(self, *args, include_station=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not include_station and "station" in self.fields:
+            self.fields.pop("station")
+
+
 class MOTagForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
