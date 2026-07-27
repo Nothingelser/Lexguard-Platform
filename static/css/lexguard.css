@@ -4055,16 +4055,17 @@ body.light-mode .lg-auth-copy h1 {
 
 /* Typography and surface polish for a less over-styled, more institutional feel. */
 html {
-  font-size: 15.5px;
+  font-size: 15px;
 }
 
 body {
   letter-spacing: 0;
+  line-height: 1.55;
 }
 
 h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
-  font-weight: 650;
+  font-weight: 600;
   text-transform: none;
 }
 
@@ -4096,7 +4097,7 @@ h1, h2, h3, h4, h5, h6 {
 .lg-filter-pill,
 .lg-masthead-chip span {
   text-transform: none;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.03em;
 }
 
 .lg-card,
@@ -4113,8 +4114,8 @@ h1, h2, h3, h4, h5, h6 {
 .lg-sidebar-brand-link,
 .lg-sidebar-status,
 .lg-sidebar-footer {
-  border-radius: 0.65rem;
-  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.04);
+  border-radius: 0.55rem;
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.03);
 }
 
 .lg-btn,
@@ -4128,7 +4129,7 @@ h1, h2, h3, h4, h5, h6 {
 .lg-pill,
 .lg-auth-pill,
 .lg-masthead-logout {
-  border-radius: 0.55rem;
+  border-radius: 0.5rem;
   text-transform: none;
   letter-spacing: 0.02em;
   font-weight: 600;
@@ -4140,11 +4141,60 @@ h1, h2, h3, h4, h5, h6 {
 .lg-ledger-banner,
 .lg-page-hero,
 .lg-record-strip {
-  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.03);
+  box-shadow: 0 6px 14px rgba(2, 6, 23, 0.025);
 }
 
 .lg-auth-copy h1 {
   letter-spacing: -0.025em;
+}
+
+.lg-sidebar-title,
+.lg-sidebar-status-copy,
+.lg-nav-link__text strong,
+.lg-nav-link__text small,
+.lg-masthead-title,
+.lg-masthead-chip strong,
+.lg-record-strip__title,
+.lg-page-hero-title,
+.lg-page-hero-copy,
+.lg-ledger-banner__title,
+.lg-panel-title,
+.lg-panel-heading,
+.lg-card-header,
+.lg-card-title,
+.lg-section-banner__title,
+.lg-command-bar__title,
+.lg-command-bar__label,
+.lg-stat-card__label,
+.lg-stat-card__title,
+.lg-stat-card__value {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.lg-auth-status,
+.lg-auth-pill,
+.lg-auth-card-state,
+.lg-auth-card-foot,
+.lg-auth-note span,
+.lg-auth-kicker,
+.lg-auth-card-kicker,
+.lg-auth-label,
+.lg-auth-brand-text em {
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+.lg-card-header,
+.lg-ledger-banner,
+.lg-page-hero,
+.lg-record-strip,
+.lg-sidebar-brand-link,
+.lg-sidebar-status,
+.lg-sidebar-footer,
+.lg-auth-card-head,
+.lg-auth-card-foot {
+  border-radius: 0.5rem;
 }
 
 @media (max-width: 1100px) {
