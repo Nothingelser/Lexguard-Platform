@@ -1,4 +1,4 @@
-{% load static %}
+{% load static permission_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -157,13 +157,19 @@
 
             <div class="lg-sidebar-access-block">
               <p class="lg-sidebar-access-label">Direct permissions</p>
-              <div class="lg-sidebar-access-list">
-                {% for permission in user_permissions %}
-                  <span class="lg-sidebar-access-chip">{{ permission.content_type.app_label }}.{{ permission.codename }}</span>
-                {% empty %}
-                  <span class="lg-sidebar-access-empty">No direct permissions</span>
-                {% endfor %}
-              </div>
+              {% regroup user_permissions by content_type.app_label as permission_groups %}
+              {% for group in permission_groups %}
+                <div class="lg-sidebar-access-group">
+                  <span class="lg-sidebar-access-group-label">{{ group.grouper|capfirst }}</span>
+                  <div class="lg-sidebar-access-list">
+                    {% for permission in group.list %}
+                      <span class="lg-sidebar-access-chip">{{ permission|permission_label }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% empty %}
+                <span class="lg-sidebar-access-empty">No direct permissions</span>
+              {% endfor %}
             </div>
           </div>
           {% endif %}

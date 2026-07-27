@@ -1,4 +1,5 @@
 {% extends "admin/base_site.html" %}
+{% load permission_tags %}
 
 {% block content %}
 <div class="module">
@@ -84,11 +85,13 @@
         </td>
         <td>
           {% if row.direct_permissions %}
-            <ul style="margin: 0; padding-left: 1rem;">
+            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
               {% for permission in row.direct_permissions %}
-                <li><code>{{ permission.content_type.app_label }}.{{ permission.codename }}</code><br><span style="color: #888;">{{ permission.name }}</span></li>
+                <span class="lg-sidebar-access-chip" style="color: #1f2937; border-color: rgba(15, 23, 42, 0.14); background: rgba(59, 130, 246, 0.06);">
+                  {{ permission|permission_label }}
+                </span>
               {% endfor %}
-            </ul>
+            </div>
           {% else %}
             <span style="color: #888;">None</span>
           {% endif %}
