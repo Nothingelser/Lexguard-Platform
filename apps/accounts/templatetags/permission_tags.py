@@ -54,3 +54,31 @@ def permission_scope(permission):
         return ""
     app_label = getattr(content_type, "app_label", "")
     return app_label.replace("_", " ").title()
+
+
+@register.filter
+def permission_family(value):
+    """
+    Turn an app label or permission object into a command-friendly permission area.
+    """
+    if not value:
+        return "Other access"
+
+    if hasattr(value, "content_type"):
+        content_type = getattr(value, "content_type", None)
+        app_label = getattr(content_type, "app_label", "") if content_type else ""
+    else:
+        app_label = str(value)
+
+    family_map = {
+        "cases": "Case actions",
+        "stations": "Registry access",
+        "suspects": "Suspect access",
+        "analytics": "Analytics access",
+        "auth": "Authentication access",
+        "admin": "Admin access",
+        "contenttypes": "System access",
+        "sessions": "System access",
+        "accounts": "Account access",
+    }
+    return family_map.get(app_label, f"{app_label.replace('_', ' ').title()} access" if app_label else "Other access")

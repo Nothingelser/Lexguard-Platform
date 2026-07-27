@@ -160,7 +160,7 @@
               {% regroup user_permissions by content_type.app_label as permission_groups %}
               {% for group in permission_groups %}
                 <div class="lg-sidebar-access-group">
-                  <span class="lg-sidebar-access-group-label">{{ group.grouper|capfirst }}</span>
+                  <span class="lg-sidebar-access-group-label">{{ group.grouper|permission_family }}</span>
                   <div class="lg-sidebar-access-list">
                     {% for permission in group.list %}
                       <span class="lg-sidebar-access-chip">{{ permission|permission_label }}</span>

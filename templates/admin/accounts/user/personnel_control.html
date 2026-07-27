@@ -85,11 +85,21 @@
         </td>
         <td>
           {% if row.direct_permissions %}
-            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-              {% for permission in row.direct_permissions %}
-                <span class="lg-sidebar-access-chip" style="color: #1f2937; border-color: rgba(15, 23, 42, 0.14); background: rgba(59, 130, 246, 0.06);">
-                  {{ permission|permission_label }}
-                </span>
+            {% regroup row.direct_permissions by content_type.app_label as direct_permission_groups %}
+            <div style="display: grid; gap: 0.55rem;">
+              {% for group in direct_permission_groups %}
+                <div style="display: grid; gap: 0.25rem;">
+                  <div style="font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #374151;">
+                    {{ group.grouper|permission_family }}
+                  </div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                    {% for permission in group.list %}
+                      <span class="lg-sidebar-access-chip" style="color: #1f2937; border-color: rgba(15, 23, 42, 0.14); background: rgba(59, 130, 246, 0.06);">
+                        {{ permission|permission_label }}
+                      </span>
+                    {% endfor %}
+                  </div>
+                </div>
               {% endfor %}
             </div>
           {% else %}
