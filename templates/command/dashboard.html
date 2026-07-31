@@ -9,6 +9,7 @@
 </nav>
 {% endblock %}
 {% block content %}
+<div id="command-dashboard-live" hx-get="{{ request.get_full_path }}" hx-trigger="load, every 30s" hx-select="#command-dashboard-live" hx-swap="outerHTML">
 <section class="lg-page-hero">
   <div class="lg-page-hero-content">
     <p class="lg-page-hero-kicker">Regional command</p>
@@ -267,4 +268,5 @@
     document.getElementById('subcountyChartEmpty').classList.remove('hidden');
   }
 </script>
+</div>
 {% endblock %}

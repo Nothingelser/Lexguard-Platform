@@ -8,6 +8,7 @@
 <nav class="lg-breadcrumb mb-6">Dashboard</nav>
 {% endblock %}
 {% block content %}
+<div id="station-dashboard-live" hx-get="{{ request.get_full_path }}" hx-trigger="load, every 30s" hx-select="#station-dashboard-live" hx-swap="outerHTML">
 <section class="lg-page-hero">
   <div class="lg-page-hero-content">
     <p class="lg-page-hero-kicker">Station workspace</p>
@@ -125,4 +126,5 @@
     });
   }
 </script>
+</div>
 {% endblock %}

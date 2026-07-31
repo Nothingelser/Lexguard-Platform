@@ -1,4 +1,4 @@
-<div class="lg-card overflow-hidden lg-table-wrap">
+<div id="search-results" class="lg-card overflow-hidden lg-table-wrap" hx-get="{{ request.get_full_path }}" hx-trigger="load, every 30s" hx-select="#search-results" hx-swap="outerHTML">
   <table class="lg-table w-full">
     <thead>
       <tr>
