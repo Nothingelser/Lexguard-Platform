@@ -120,7 +120,8 @@
         {% csrf_token %}
         <input name="national_id" placeholder="National ID" required class="lg-input text-sm">
         <input name="full_name" placeholder="Full name (if new record)" class="lg-input text-sm">
-        <button type="submit" class="lg-btn lg-btn-primary w-full text-xs">Link Record</button>
+        <p class="text-xs text-[var(--lg-muted)]">Use this form again to add more suspects to the same case.</p>
+        <button type="submit" class="lg-btn lg-btn-primary w-full text-xs">Add Suspect</button>
       </form>
       {% endif %}
     </section>

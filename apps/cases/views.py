@@ -137,23 +137,28 @@ def case_link_suspect(request, pk):
 
     case = get_object_or_404(Case.objects.filter(station=request.user.station), pk=pk)
     form = SuspectLinkForm(request.POST)
+    confirmation = None
     if form.is_valid():
         suspect = form.resolve_suspect()
-        CaseSuspect.objects.get_or_create(
+        _, created = CaseSuspect.objects.get_or_create(
             case=case,
             suspect=suspect,
             defaults={"role": form.cleaned_data.get("role") or "suspect"},
         )
-        confirmation = f"Linked {suspect.full_name} to {case.case_number}."
-        log_audit(request.user, "link", "suspect", suspect.pk, f"Linked to case {case.case_number}")
+        if created:
+            confirmation = f"Linked {suspect.full_name} to {case.case_number}."
+            log_audit(request.user, "link", "suspect", suspect.pk, f"Linked to case {case.case_number}")
+        else:
+            confirmation = f"{suspect.full_name} is already linked to {case.case_number}."
 
     if request.htmx:
         case = get_object_or_404(
             Case.objects.prefetch_related("case_suspects__suspect"),
             pk=case.pk,
         )
-        return _confirm_action(request, confirmation, render(request, "cases/partials/suspect_list.html", {"case": case}))
-    if form.is_valid():
+        response = render(request, "cases/partials/suspect_list.html", {"case": case})
+        return _confirm_action(request, confirmation or "No changes made.", response)
+    if confirmation:
         _confirm_action(request, confirmation)
     return redirect("cases:detail", pk=case.pk)
 

@@ -168,6 +168,34 @@ class CaseRegistrationAndExportTests(TestCase):
         self.assertTrue(Suspect.objects.filter(national_id="ID-12345678", full_name="Jane Doe").exists())
         self.assertTrue(CaseSuspect.objects.filter(case=case, suspect__national_id="ID-12345678", role="suspect").exists())
 
+    def test_case_link_suspect_duplicate_shows_already_linked_notification(self):
+        case = Case.objects.create(
+            station=self.station,
+            case_number=f"CR-{self.station.code}-{timezone.now().year}-0005",
+            title="Duplicate suspect test",
+            crime_category="theft",
+            location="Mvita",
+            narrative="Narrative",
+            created_by=self.officer,
+        )
+        suspect = Suspect.objects.create(national_id="ID-99999999", full_name="John Doe")
+        CaseSuspect.objects.create(case=case, suspect=suspect, role="suspect")
+        self.client.force_login(self.officer)
+
+        response = self.client.post(
+            reverse("cases:link_suspect", args=[case.pk]),
+            {
+                "national_id": "ID-99999999",
+                "full_name": "John Doe",
+            },
+            HTTP_HX_REQUEST="true",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        trigger = json.loads(response["HX-Trigger"])
+        self.assertIn("already linked", trigger["lexguard:notify"]["message"])
+        self.assertEqual(CaseSuspect.objects.filter(case=case, suspect=suspect).count(), 1)
+
     def test_case_add_witness_emits_confirmation_trigger_for_htmx(self):
         case = Case.objects.create(
             station=self.station,

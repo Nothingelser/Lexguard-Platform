@@ -30,6 +30,9 @@
 
 <section class="lg-card overflow-hidden lg-table-wrap">
   <div class="lg-card-header">Linked Case Files ({{ case_links|length }})</div>
+  <div class="px-5 pt-3 text-xs text-[var(--lg-muted)]">
+    This identity can link to multiple cases. Use the case page link form again to add another case file for the same suspect.
+  </div>
   <table class="lg-table w-full">
     <thead><tr>
       <th>Case #</th>
@@ -44,7 +47,7 @@
       <tr>
         <td class="font-medium">{{ link.case.case_number }}</td>
         {% if user.is_commander %}<td class="font-mono text-xs">{{ link.case.station.code }}</td>{% endif %}
-        <td class="max-w-xs truncate">{{ link.case.title }}</td>
+        <td class="max-w-xs whitespace-normal break-words">{{ link.case.title }}</td>
         <td><span class="badge badge-other">{{ link.role }}</span></td>
         <td>{% status_badge link.case.status link.case.get_status_display %}</td>
         <td><a href="{% url 'cases:detail' link.case.pk %}" class="lg-link text-xs">Open</a></td>
