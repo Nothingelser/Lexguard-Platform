@@ -42,6 +42,15 @@ class SuspectRegistrationTests(TestCase):
         self.assertContains(response, "Register New Suspect")
         self.assertContains(response, "national_id=12345678")
 
+    def test_commander_sees_full_directory_without_search(self):
+        Suspect.objects.create(national_id="11111111", full_name="Zara One")
+        self.client.force_login(self.commander)
+
+        response = self.client.get(reverse("suspects:search"))
+
+        self.assertContains(response, "11111111")
+        self.assertContains(response, "Zara One")
+
     def test_station_officer_can_register_global_suspect(self):
         self.client.force_login(self.officer)
 

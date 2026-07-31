@@ -18,6 +18,8 @@ def suspect_search(request):
         suspects = Suspect.objects.filter(
             Q(national_id__icontains=query) | Q(full_name__icontains=query) | Q(aliases__icontains=query)
         )[:20]
+    elif request.user.is_commander:
+        suspects = Suspect.objects.all().order_by("full_name")
 
     template = "suspects/partials/search_results.html" if request.htmx else "suspects/search.html"
     context = {"suspects": suspects, "query": query}
