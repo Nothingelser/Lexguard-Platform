@@ -1,9 +1,13 @@
+import json
+import re
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from apps.cases.models import AuditLog, Case, CaseSuspect
+from apps.cases.exports import build_case_pdf
 from apps.cases.services import next_case_number
 from apps.stations.models import PoliceStation
 from apps.suspects.models import Suspect
@@ -157,5 +161,57 @@ class CaseRegistrationAndExportTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Jane Doe")
+        self.assertIn("HX-Trigger", response)
+        trigger = json.loads(response["HX-Trigger"])
+        self.assertEqual(trigger["lexguard:notify"]["level"], "success")
+        self.assertIn("Linked Jane Doe", trigger["lexguard:notify"]["message"])
         self.assertTrue(Suspect.objects.filter(national_id="ID-12345678", full_name="Jane Doe").exists())
         self.assertTrue(CaseSuspect.objects.filter(case=case, suspect__national_id="ID-12345678", role="suspect").exists())
+
+    def test_case_add_witness_emits_confirmation_trigger_for_htmx(self):
+        case = Case.objects.create(
+            station=self.station,
+            case_number=f"CR-{self.station.code}-{timezone.now().year}-0003",
+            title="Witness confirmation test",
+            crime_category="theft",
+            location="Mvita",
+            narrative="Narrative",
+            created_by=self.officer,
+        )
+        self.client.force_login(self.officer)
+
+        response = self.client.post(
+            reverse("cases:add_witness", args=[case.pk]),
+            {
+                "full_name": "Witness One",
+                "contact": "0700000000",
+                "statement": "Saw the suspect leave the scene.",
+            },
+            HTTP_HX_REQUEST="true",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("HX-Trigger", response)
+        trigger = json.loads(response["HX-Trigger"])
+        self.assertEqual(trigger["lexguard:notify"]["level"], "success")
+        self.assertIn("Added witness", trigger["lexguard:notify"]["message"])
+
+    def test_case_export_pdf_compacts_long_evidence_references(self):
+        case = Case.objects.create(
+            station=self.station,
+            case_number=f"CR-{self.station.code}-{timezone.now().year}-0004",
+            title="Long evidence reference test",
+            crime_category="theft",
+            location="Mvita",
+            narrative="Narrative",
+            created_by=self.officer,
+        )
+        case.evidence_items.create(
+            label="ROBERY FOOTAGE",
+            storage_path="https://example.supabase.co/storage/v1/object/public/case-evidence/2026/07/31/this-is-a-very-long-evidence-reference-that-should-not-spill-into-a-second-page.mp4",
+        )
+
+        pdf_bytes = build_case_pdf(case)
+
+        self.assertIn(b"this-is-a-very-long-evidence-reference-that-should-not-spill-into-a-s...", pdf_bytes)
+        self.assertEqual(len(re.findall(rb"/Type /Page(?!s)", pdf_bytes)), 1)

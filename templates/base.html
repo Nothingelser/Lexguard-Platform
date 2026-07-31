@@ -252,10 +252,35 @@
     </div>
   </div>
   {% endblock %}
+  <div id="lg-toast-region" class="lg-toast-region" aria-live="polite" aria-atomic="true"></div>
   <button id="theme-toggle" aria-label="Toggle theme" class="fixed bottom-6 right-6 z-50 bg-[var(--lg-panel)] p-3 rounded-full shadow-lg border border-[var(--lg-border)]"></button>
   <script src="{% static 'js/theme-toggle.js' %}?v=20260710b"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const toastRegion = document.getElementById("lg-toast-region");
+      const showToast = (message, level = "success") => {
+        if (!toastRegion || !message) return;
+        const toast = document.createElement("div");
+        toast.className = `lg-toast lg-toast-${level}`;
+        toast.innerHTML = `
+          <div class="lg-toast__dot" aria-hidden="true"></div>
+          <div class="lg-toast__body">
+            <p class="lg-toast__title">Confirmation</p>
+            <p class="lg-toast__message">${message}</p>
+          </div>
+        `;
+        toastRegion.appendChild(toast);
+        window.setTimeout(() => {
+          toast.classList.add("is-dismissing");
+          window.setTimeout(() => toast.remove(), 180);
+        }, 3400);
+      };
+
+      document.body.addEventListener("lexguard:notify", (event) => {
+        const detail = event.detail || {};
+        showToast(detail.message, detail.level || "success");
+      });
+
       const sidebar = document.getElementById("lg-sidebar");
       const toggle = document.querySelector("[data-sidebar-toggle]");
       const backdrop = document.querySelector("[data-sidebar-backdrop]");

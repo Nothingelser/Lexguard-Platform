@@ -1,3 +1,6 @@
+import json
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden
@@ -10,6 +13,18 @@ from apps.cases.forms import CaseIntakeForm, EvidenceForm, MOTagForm, SuspectLin
 from apps.cases.models import AuditLog, Case, CaseSuspect, CaseStatus, CrimeCategory, EvidenceItem
 from apps.cases.services import log_audit, next_case_number
 from apps.cases.storage import upload_evidence_file
+
+
+def _confirm_action(request, message, response=None):
+    messages.success(request, message)
+    if response is not None and request.htmx:
+        response["HX-Trigger"] = json.dumps({
+            "lexguard:notify": {
+                "message": message,
+                "level": "success",
+            }
+        })
+    return response
 
 
 def _officer_cases(request):
@@ -75,6 +90,7 @@ def case_create(request):
             case.modus_operandi = mo_form.cleaned_mo_tags()
             case.save()
             log_audit(request.user, "create", "case", case.pk, f"Registered case {case.case_number}")
+            messages.success(request, f"Case {case.case_number} created successfully.")
             return redirect("cases:detail", pk=case.pk)
 
     return render(
@@ -128,6 +144,7 @@ def case_link_suspect(request, pk):
             suspect=suspect,
             defaults={"role": form.cleaned_data.get("role") or "suspect"},
         )
+        confirmation = f"Linked {suspect.full_name} to {case.case_number}."
         log_audit(request.user, "link", "suspect", suspect.pk, f"Linked to case {case.case_number}")
 
     if request.htmx:
@@ -135,7 +152,9 @@ def case_link_suspect(request, pk):
             Case.objects.prefetch_related("case_suspects__suspect"),
             pk=case.pk,
         )
-        return render(request, "cases/partials/suspect_list.html", {"case": case})
+        return _confirm_action(request, confirmation, render(request, "cases/partials/suspect_list.html", {"case": case}))
+    if form.is_valid():
+        _confirm_action(request, confirmation)
     return redirect("cases:detail", pk=case.pk)
 
 
@@ -152,6 +171,7 @@ def case_add_witness(request, pk):
         witness = form.save(commit=False)
         witness.case = case
         witness.save()
+        confirmation = f"Added witness to {case.case_number}."
         log_audit(request.user, "add", "witness", witness.pk, f"Added witness to {case.case_number}")
 
     if request.htmx:
@@ -159,7 +179,9 @@ def case_add_witness(request, pk):
             Case.objects.prefetch_related("witnesses"),
             pk=case.pk,
         )
-        return render(request, "cases/partials/witness_list.html", {"case": case})
+        return _confirm_action(request, confirmation, render(request, "cases/partials/witness_list.html", {"case": case}))
+    if form.is_valid():
+        _confirm_action(request, confirmation)
     return redirect("cases:detail", pk=case.pk)
 
 
@@ -173,6 +195,7 @@ def case_add_evidence(request, pk):
     case = get_object_or_404(Case.objects.filter(station=request.user.station), pk=pk)
     form = EvidenceForm(request.POST, request.FILES)
     saved = False
+    confirmation = None
     if form.is_valid():
         try:
             item = form.save(commit=False)
@@ -185,6 +208,7 @@ def case_add_evidence(request, pk):
             item.uploaded_at = timezone.now()
             item.case = case
             item.save()
+            confirmation = f"Logged evidence '{item.label}' for {case.case_number}."
             log_audit(request.user, "add", "evidence", item.pk, f"Logged evidence for {case.case_number}")
             saved = True
         except RuntimeError as exc:
@@ -196,7 +220,8 @@ def case_add_evidence(request, pk):
                 Case.objects.prefetch_related("evidence_items"),
                 pk=case.pk,
             )
-            return render(request, "cases/partials/evidence_list.html", {"case": case})
+            return _confirm_action(request, confirmation, render(request, "cases/partials/evidence_list.html", {"case": case}))
+        _confirm_action(request, confirmation)
         return redirect("cases:detail", pk=case.pk)
 
     if request.htmx:
@@ -233,6 +258,7 @@ def case_delete_evidence(request, case_pk, pk):
     evidence = get_object_or_404(EvidenceItem.objects.filter(case=case), pk=pk)
     label = evidence.label
     evidence.delete()
+    confirmation = f"Deleted evidence '{label}' from {case.case_number}."
     log_audit(request.user, "delete", "evidence", pk, f"Deleted evidence {label} from {case.case_number}")
 
     if request.htmx:
@@ -240,7 +266,8 @@ def case_delete_evidence(request, case_pk, pk):
             Case.objects.prefetch_related("evidence_items"),
             pk=case.pk,
         )
-        return render(request, "cases/partials/evidence_list.html", {"case": case})
+        return _confirm_action(request, confirmation, render(request, "cases/partials/evidence_list.html", {"case": case}))
+    _confirm_action(request, confirmation)
     return redirect("cases:detail", pk=case.pk)
 
 
@@ -255,7 +282,9 @@ def case_set_investigating(request, pk):
     if case.status == CaseStatus.OPEN:
         case.status = CaseStatus.INVESTIGATING
         case.save(update_fields=["status", "updated_at"])
+        confirmation = f"Case {case.case_number} marked under investigation."
         log_audit(request.user, "update", "case", case.pk, f"Case {case.case_number} marked under investigation")
+        _confirm_action(request, confirmation)
     return redirect("cases:detail", pk=case.pk)
 
 
@@ -286,7 +315,9 @@ def case_close(request, pk):
     case.status = CaseStatus.CLOSED
     case.closed_at = timezone.now()
     case.save(update_fields=["status", "closed_at", "updated_at"])
+    confirmation = f"Closed case {case.case_number}."
     log_audit(request.user, "close", "case", case.pk, f"Closed case {case.case_number}")
+    _confirm_action(request, confirmation)
     return redirect("cases:detail", pk=case.pk)
 
 
