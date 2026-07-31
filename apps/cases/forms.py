@@ -68,6 +68,11 @@ class MOTagForm(forms.Form):
 class SuspectLinkForm(forms.Form):
     national_id = forms.CharField(max_length=32, label="National ID")
     full_name = forms.CharField(max_length=128, required=False)
+    photo = forms.FileField(
+        required=False,
+        label="Photo",
+        widget=forms.ClearableFileInput(attrs={"class": INPUT_CLASS, "accept": "image/*"}),
+    )
     role = forms.CharField(max_length=64, required=False, initial="suspect")
 
     def resolve_suspect(self):
@@ -76,9 +81,16 @@ class SuspectLinkForm(forms.Form):
             national_id=national_id,
             defaults={"full_name": self.cleaned_data.get("full_name") or national_id},
         )
+        updated_fields = []
         if self.cleaned_data.get("full_name") and suspect.full_name != self.cleaned_data["full_name"]:
             suspect.full_name = self.cleaned_data["full_name"]
-            suspect.save(update_fields=["full_name", "updated_at"])
+            updated_fields.append("full_name")
+        photo = self.cleaned_data.get("photo")
+        if photo:
+            suspect.photo = photo
+            updated_fields.append("photo")
+        if updated_fields:
+            suspect.save(update_fields=[*updated_fields, "updated_at"])
         return suspect
 
 

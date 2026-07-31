@@ -13,6 +13,11 @@
     <p class="lg-page-hero-kicker">Identity profile</p>
     <h1 class="lg-page-hero-title">{{ suspect.full_name }}</h1>
     <p class="lg-page-hero-copy">National ID: {{ suspect.national_id }}{% if suspect.aliases %}. Aliases: {{ suspect.aliases }}{% endif %}</p>
+    {% if user.is_station_officer %}
+    <div class="mt-4">
+      <a href="{% url 'suspects:edit' suspect.pk %}" class="lg-btn lg-btn-secondary">Edit Suspect</a>
+    </div>
+    {% endif %}
   </div>
   <div class="lg-page-hero-aside">
     <div class="lg-hero-aside-card">

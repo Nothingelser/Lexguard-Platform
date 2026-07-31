@@ -1,17 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Register Suspect - LexGuard{% endblock %}
+{% block title %}{% if editing %}Edit Suspect{% else %}Register Suspect{% endif %} - LexGuard{% endblock %}
 {% block breadcrumbs %}
 <nav class="lg-breadcrumb mb-6">
   <a href="{% url 'dashboard' %}">Dashboard</a> /
-  <a href="{% url 'suspects:search' %}">Suspects</a> / Register New Suspect
+  <a href="{% url 'suspects:search' %}">Suspects</a> /
+  {% if editing %}Edit {{ suspect.national_id }}{% else %}Register New Suspect{% endif %}
 </nav>
 {% endblock %}
 {% block content %}
 <section class="lg-page-hero">
   <div class="lg-page-hero-content">
     <p class="lg-page-hero-kicker">Identity intake</p>
-    <h1 class="lg-page-hero-title">Register New Suspect</h1>
-    <p class="lg-page-hero-copy">Create a centralized identity record for future case linking and avoid duplicates across stations.</p>
+    <h1 class="lg-page-hero-title">{% if editing %}Edit Suspect Record{% else %}Register New Suspect{% endif %}</h1>
+    <p class="lg-page-hero-copy">
+      {% if editing %}
+      Update the suspect identity, photo, and notes without breaking linked case history.
+      {% else %}
+      Create a centralized identity record for future case linking and avoid duplicates across stations.
+      {% endif %}
+    </p>
   </div>
   <div class="lg-page-hero-aside">
     <div class="lg-hero-aside-card">
@@ -22,7 +29,7 @@
     <div class="lg-hero-aside-card">
       <span>Access</span>
       <strong>Station and command aware</strong>
-      <p>Visible according to the logged-in officer’s scope.</p>
+      <p>Visible according to the logged-in officer's scope.</p>
     </div>
   </div>
 </section>
@@ -71,8 +78,12 @@
   </div>
 
   <div class="flex flex-wrap gap-3">
-    <button type="submit" class="lg-btn lg-btn-primary">Save Suspect</button>
+    <button type="submit" class="lg-btn lg-btn-primary">{% if editing %}Update Suspect{% else %}Save Suspect{% endif %}</button>
+    {% if editing %}
+    <a href="{% url 'suspects:profile' suspect.pk %}" class="lg-btn lg-btn-secondary">Cancel</a>
+    {% else %}
     <a href="{% url 'suspects:search' %}" class="lg-btn lg-btn-secondary">Cancel</a>
+    {% endif %}
   </div>
 </form>
 {% endblock %}

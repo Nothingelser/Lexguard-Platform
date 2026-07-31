@@ -136,7 +136,7 @@ def case_link_suspect(request, pk):
     enforce_write_access(request)
 
     case = get_object_or_404(Case.objects.filter(station=request.user.station), pk=pk)
-    form = SuspectLinkForm(request.POST)
+    form = SuspectLinkForm(request.POST, request.FILES)
     confirmation = None
     if form.is_valid():
         suspect = form.resolve_suspect()

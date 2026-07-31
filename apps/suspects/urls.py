@@ -7,5 +7,6 @@ app_name = "suspects"
 urlpatterns = [
     path("search/", views.suspect_search, name="search"),
     path("new/", views.suspect_create, name="create"),
+    path("<int:pk>/edit/", views.suspect_edit, name="edit"),
     path("<int:pk>/", views.suspect_profile, name="profile"),
 ]

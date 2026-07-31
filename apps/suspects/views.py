@@ -46,6 +46,21 @@ def suspect_create(request):
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
+def suspect_edit(request, pk):
+    if not require_station_officer(request.user):
+        return HttpResponseForbidden("Station officers only.")
+
+    suspect = get_object_or_404(Suspect, pk=pk)
+    form = SuspectForm(request.POST or None, request.FILES or None, instance=suspect)
+    if request.method == "POST" and form.is_valid():
+        suspect = form.save()
+        return redirect("suspects:profile", pk=suspect.pk)
+
+    return render(request, "suspects/suspect_form.html", {"form": form, "suspect": suspect, "editing": True})
+
+
+@login_required
 def suspect_profile(request, pk):
     suspect = get_object_or_404(Suspect, pk=pk)
     links = CaseSuspect.objects.filter(suspect=suspect).select_related("case", "case__station")

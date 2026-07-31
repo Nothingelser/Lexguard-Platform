@@ -92,6 +92,42 @@ class SuspectRegistrationTests(TestCase):
         self.assertContains(profile_response, "Identity board")
         self.assertContains(profile_response, suspect.full_name)
 
+    def test_station_officer_can_edit_suspect_photo_and_details(self):
+        suspect = Suspect.objects.create(
+            national_id="12345678",
+            full_name="Asha Mwinyi",
+            aliases="AM",
+            notes="Known identity record.",
+        )
+        self.client.force_login(self.officer)
+
+        png_bytes = (
+            b"\x89PNG\r\n\x1a\n"
+            b"\x00\x00\x00\rIHDR"
+            b"\x00\x00\x00\x01\x00\x00\x00\x01"
+            b"\x08\x02\x00\x00\x00\x90wS\xde"
+            b"\x00\x00\x00\x0cIDAT\x08\xd7c`\x00\x00\x00\x02\x00\x01"
+            b"\xe2!\xbc3\x00\x00\x00\x00IEND\xaeB`\x82"
+        )
+        photo = SimpleUploadedFile("suspect-edit.png", png_bytes, content_type="image/png")
+
+        response = self.client.post(
+            reverse("suspects:edit", args=[suspect.pk]),
+            {
+                "national_id": "12345678",
+                "full_name": "Asha Mwinyi Updated",
+                "aliases": "AM",
+                "date_of_birth": "",
+                "notes": "Updated record.",
+                "photo": photo,
+            },
+        )
+
+        suspect.refresh_from_db()
+        self.assertRedirects(response, reverse("suspects:profile", args=[suspect.pk]))
+        self.assertEqual(suspect.full_name, "Asha Mwinyi Updated")
+        self.assertTrue(suspect.photo.name.startswith("suspects/photos/"))
+
     def test_commander_cannot_register_suspect(self):
         self.client.force_login(self.commander)
 

@@ -2,6 +2,7 @@ import json
 import re
 
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -167,6 +168,72 @@ class CaseRegistrationAndExportTests(TestCase):
         self.assertIn("Linked Jane Doe", trigger["lexguard:notify"]["message"])
         self.assertTrue(Suspect.objects.filter(national_id="ID-12345678", full_name="Jane Doe").exists())
         self.assertTrue(CaseSuspect.objects.filter(case=case, suspect__national_id="ID-12345678", role="suspect").exists())
+
+    def test_case_link_suspect_saves_unique_photo_per_suspect(self):
+        case = Case.objects.create(
+            station=self.station,
+            case_number=f"CR-{self.station.code}-{timezone.now().year}-0006",
+            title="Photo isolation test",
+            crime_category="theft",
+            location="Mvita",
+            narrative="Narrative",
+            created_by=self.officer,
+        )
+        self.client.force_login(self.officer)
+
+        photo_one = SimpleUploadedFile(
+            "suspect-one.png",
+            (
+                b"\x89PNG\r\n\x1a\n"
+                b"\x00\x00\x00\rIHDR"
+                b"\x00\x00\x00\x01\x00\x00\x00\x01"
+                b"\x08\x02\x00\x00\x00\x90wS\xde"
+                b"\x00\x00\x00\x0cIDAT\x08\xd7c`\x00\x00\x00\x02\x00\x01"
+                b"\xe2!\xbc3\x00\x00\x00\x00IEND\xaeB`\x82"
+            ),
+            content_type="image/png",
+        )
+        photo_two = SimpleUploadedFile(
+            "suspect-two.png",
+            (
+                b"\x89PNG\r\n\x1a\n"
+                b"\x00\x00\x00\rIHDR"
+                b"\x00\x00\x00\x01\x00\x00\x00\x01"
+                b"\x08\x02\x00\x00\x00\x90wS\xde"
+                b"\x00\x00\x00\x0cIDAT\x08\xd7c`\x00\x00\x00\x02\x00\x01"
+                b"\xe2!\xbc3\x00\x00\x00\x00IEND\xaeB`\x82"
+            ),
+            content_type="image/png",
+        )
+
+        response_one = self.client.post(
+            reverse("cases:link_suspect", args=[case.pk]),
+            {
+                "national_id": "ID-11111111",
+                "full_name": "Alice One",
+                "photo": photo_one,
+            },
+            HTTP_HX_REQUEST="true",
+        )
+        response_two = self.client.post(
+            reverse("cases:link_suspect", args=[case.pk]),
+            {
+                "national_id": "ID-22222222",
+                "full_name": "Bob Two",
+                "photo": photo_two,
+            },
+            HTTP_HX_REQUEST="true",
+        )
+
+        self.assertEqual(response_one.status_code, 200)
+        self.assertEqual(response_two.status_code, 200)
+        suspect_one = Suspect.objects.get(national_id="ID-11111111")
+        suspect_two = Suspect.objects.get(national_id="ID-22222222")
+        self.assertTrue(suspect_one.photo.name.startswith("suspects/photos/"))
+        self.assertTrue(suspect_two.photo.name.startswith("suspects/photos/"))
+        self.assertNotEqual(suspect_one.photo.name, suspect_two.photo.name)
+        self.assertTrue(CaseSuspect.objects.filter(case=case, suspect=suspect_one).exists())
+        self.assertTrue(CaseSuspect.objects.filter(case=case, suspect=suspect_two).exists())
 
     def test_case_link_suspect_duplicate_shows_already_linked_notification(self):
         case = Case.objects.create(

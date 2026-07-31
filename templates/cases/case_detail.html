@@ -116,10 +116,11 @@
       <div class="lg-card-header">Linked Suspects</div>
       <div class="p-4" id="suspect-list">{% include "cases/partials/suspect_list.html" %}</div>
       {% if user.is_station_officer and case.status != 'closed' %}
-      <form method="post" action="{% url 'cases:link_suspect' case.pk %}" hx-post="{% url 'cases:link_suspect' case.pk %}" hx-target="#suspect-list" hx-swap="innerHTML" class="p-4 border-t border-[var(--lg-border)] space-y-2">
+      <form method="post" action="{% url 'cases:link_suspect' case.pk %}" hx-post="{% url 'cases:link_suspect' case.pk %}" hx-encoding="multipart/form-data" hx-target="#suspect-list" hx-swap="innerHTML" hx-on::after-request="this.reset()" enctype="multipart/form-data" class="p-4 border-t border-[var(--lg-border)] space-y-2">
         {% csrf_token %}
         <input name="national_id" placeholder="National ID" required class="lg-input text-sm">
         <input name="full_name" placeholder="Full name (if new record)" class="lg-input text-sm">
+        <input type="file" name="photo" accept="image/*" class="lg-input text-sm">
         <p class="text-xs text-[var(--lg-muted)]">Use this form again to add more suspects to the same case.</p>
         <button type="submit" class="lg-btn lg-btn-primary w-full text-xs">Add Suspect</button>
       </form>
