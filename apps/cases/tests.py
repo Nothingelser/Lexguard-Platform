@@ -3,9 +3,10 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.cases.models import AuditLog
+from apps.cases.models import AuditLog, Case, CaseSuspect
 from apps.cases.services import next_case_number
 from apps.stations.models import PoliceStation
+from apps.suspects.models import Suspect
 
 
 User = get_user_model()
@@ -132,3 +133,29 @@ class CaseRegistrationAndExportTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'class="lg-filter-pill active"')
         self.assertContains(response, ">Open<")
+
+    def test_case_link_suspect_creates_link_and_returns_updated_partial(self):
+        case = Case.objects.create(
+            station=self.station,
+            case_number=f"CR-{self.station.code}-{timezone.now().year}-0002",
+            title="Link suspect test",
+            crime_category="theft",
+            location="Mvita",
+            narrative="Narrative",
+            created_by=self.officer,
+        )
+        self.client.force_login(self.officer)
+
+        response = self.client.post(
+            reverse("cases:link_suspect", args=[case.pk]),
+            {
+                "national_id": "ID-12345678",
+                "full_name": "Jane Doe",
+            },
+            HTTP_HX_REQUEST="true",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Jane Doe")
+        self.assertTrue(Suspect.objects.filter(national_id="ID-12345678", full_name="Jane Doe").exists())
+        self.assertTrue(CaseSuspect.objects.filter(case=case, suspect__national_id="ID-12345678", role="suspect").exists())

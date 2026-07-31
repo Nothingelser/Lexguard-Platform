@@ -126,7 +126,7 @@ def case_link_suspect(request, pk):
         CaseSuspect.objects.get_or_create(
             case=case,
             suspect=suspect,
-            defaults={"role": form.cleaned_data["role"]},
+            defaults={"role": form.cleaned_data.get("role") or "suspect"},
         )
         log_audit(request.user, "link", "suspect", suspect.pk, f"Linked to case {case.case_number}")
 

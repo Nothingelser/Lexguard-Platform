@@ -68,7 +68,7 @@ class MOTagForm(forms.Form):
 class SuspectLinkForm(forms.Form):
     national_id = forms.CharField(max_length=32, label="National ID")
     full_name = forms.CharField(max_length=128, required=False)
-    role = forms.CharField(max_length=64, initial="suspect")
+    role = forms.CharField(max_length=64, required=False, initial="suspect")
 
     def resolve_suspect(self):
         national_id = self.cleaned_data["national_id"].strip()
