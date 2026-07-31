@@ -20,7 +20,10 @@ def suspect_search(request):
         )[:20]
 
     template = "suspects/partials/search_results.html" if request.htmx else "suspects/search.html"
-    return render(request, template, {"suspects": suspects, "query": query})
+    context = {"suspects": suspects, "query": query}
+    if request.user.is_commander:
+        context["all_suspects"] = Suspect.objects.all().order_by("full_name")
+    return render(request, template, context)
 
 
 @login_required
@@ -34,7 +37,7 @@ def suspect_create(request):
     if national_id:
         initial["national_id"] = national_id
 
-    form = SuspectForm(request.POST or None, initial=initial)
+    form = SuspectForm(request.POST or None, request.FILES or None, initial=initial)
     if request.method == "POST" and form.is_valid():
         suspect = form.save()
         return redirect("suspects:profile", pk=suspect.pk)

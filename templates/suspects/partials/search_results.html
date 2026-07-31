@@ -1,14 +1,26 @@
 <div class="lg-card overflow-hidden lg-table-wrap">
   <table class="lg-table w-full">
-    <thead><tr>
-      <th>National ID</th>
-      <th>Full Name</th>
-      <th>Aliases</th>
-      <th>Last Updated</th>
-    </tr></thead>
+    <thead>
+      <tr>
+        <th>Photo</th>
+        <th>National ID</th>
+        <th>Full Name</th>
+        <th>Aliases</th>
+        <th>Last Updated</th>
+      </tr>
+    </thead>
     <tbody>
       {% for suspect in suspects %}
       <tr>
+        <td>
+          {% if suspect.photo %}
+          <a href="{% url 'suspects:profile' suspect.pk %}">
+            <img src="{{ suspect.photo.url }}" alt="{{ suspect.full_name }}" class="w-12 h-12 object-cover rounded-xl border border-[var(--lg-border)]">
+          </a>
+          {% else %}
+          <div class="w-12 h-12 rounded-xl border border-dashed border-[var(--lg-border)] bg-[var(--lg-surface)] flex items-center justify-center text-[10px] text-[var(--lg-muted)]">No photo</div>
+          {% endif %}
+        </td>
         <td class="font-mono text-sm lg-link">
           <a href="{% url 'suspects:profile' suspect.pk %}" class="hover:underline">{{ suspect.national_id }}</a>
         </td>
@@ -19,18 +31,20 @@
         <td class="text-xs text-[var(--lg-muted)]">{{ suspect.updated_at|date:"M d, Y" }}</td>
       </tr>
       {% empty %}
-      <tr><td colspan="4" class="text-center py-10 text-[var(--lg-muted)]">
-        {% if query %}
-          <div class="space-y-3">
-            <p>No records found for "{{ query }}".</p>
-            {% if user.is_station_officer %}
-            <a href="{% url 'suspects:create' %}?national_id={{ query|urlencode }}" class="lg-btn lg-btn-primary inline-flex">Register New Suspect</a>
-            {% endif %}
-          </div>
-        {% else %}
-          Enter a National ID or name to search the directory.
-        {% endif %}
-      </td></tr>
+      <tr>
+        <td colspan="5" class="text-center py-10 text-[var(--lg-muted)]">
+          {% if query %}
+            <div class="space-y-3">
+              <p>No records found for "{{ query }}".</p>
+              {% if user.is_station_officer %}
+              <a href="{% url 'suspects:create' %}?national_id={{ query|urlencode }}" class="lg-btn lg-btn-primary inline-flex">Register New Suspect</a>
+              {% endif %}
+            </div>
+          {% else %}
+            Enter a National ID or name to search the directory.
+          {% endif %}
+        </td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>

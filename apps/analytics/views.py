@@ -13,6 +13,7 @@ from apps.analytics.pattern_matcher import (
     subcounty_hotspots,
 )
 from apps.cases.models import AuditLog, Case
+from apps.suspects.models import Suspect
 
 
 @login_required
@@ -86,6 +87,8 @@ def _command_context():
         "top_alerts": alerts[:5],
         "hotspots": hotspots,
         "max_hotspot": max_hotspot,
+        "suspects": Suspect.objects.all().order_by("full_name"),
+        "suspect_count": Suspect.objects.count(),
     }
 
 

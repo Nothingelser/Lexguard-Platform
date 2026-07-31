@@ -27,7 +27,7 @@
   </div>
 </section>
 
-<form method="post" class="lg-card p-5 max-w-3xl space-y-5">
+<form method="post" enctype="multipart/form-data" class="lg-card p-5 max-w-3xl space-y-5">
   {% csrf_token %}
   {% if form.non_field_errors %}
   <div class="lg-card p-3 text-sm lg-danger">
@@ -55,6 +55,12 @@
       <label class="block text-xs font-medium text-[var(--lg-muted)] uppercase tracking-[0.24em] mb-2" for="{{ form.date_of_birth.id_for_label }}">Date of Birth</label>
       {{ form.date_of_birth }}
       {{ form.date_of_birth.errors }}
+    </div>
+    <div class="md:col-span-2">
+      <label class="block text-xs font-medium text-[var(--lg-muted)] uppercase tracking-[0.24em] mb-2" for="{{ form.photo.id_for_label }}">Photo</label>
+      {{ form.photo }}
+      <p class="mt-2 text-xs text-[var(--lg-muted)]">Optional clear face image for recognition in the directory and commander view.</p>
+      {{ form.photo.errors }}
     </div>
   </div>
 

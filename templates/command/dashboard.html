@@ -126,6 +126,50 @@
 </section>
 {% endif %}
 
+<section class="lg-card overflow-hidden mb-8 lg-table-wrap">
+  <div class="lg-card-header flex items-center justify-between">
+    <span>Full Suspect Directory</span>
+    <span class="text-xs text-[var(--lg-muted)]">{{ suspect_count }} records</span>
+  </div>
+  <div class="px-5 pt-3 text-xs text-[var(--lg-muted)]">
+    Commander view includes every suspect record with an optional face photo for quick recognition and cross-case review.
+  </div>
+  <div class="p-5 max-h-[34rem] overflow-auto">
+    <table class="lg-table w-full">
+      <thead>
+        <tr>
+          <th>Photo</th>
+          <th>National ID</th>
+          <th>Full Name</th>
+          <th>Aliases</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for suspect in suspects %}
+        <tr>
+          <td>
+            {% if suspect.photo %}
+            <img src="{{ suspect.photo.url }}" alt="{{ suspect.full_name }}" class="w-12 h-12 object-cover rounded-xl border border-[var(--lg-border)]">
+            {% else %}
+            <div class="w-12 h-12 rounded-xl border border-dashed border-[var(--lg-border)] bg-[var(--lg-surface)] flex items-center justify-center text-[10px] text-[var(--lg-muted)]">No photo</div>
+            {% endif %}
+          </td>
+          <td class="font-mono text-sm">{{ suspect.national_id }}</td>
+          <td class="font-medium">{{ suspect.full_name }}</td>
+          <td class="text-sm text-[var(--lg-muted)]">{{ suspect.aliases|default:"—" }}</td>
+          <td class="text-xs text-[var(--lg-muted)]">{{ suspect.updated_at|date:"M d, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center py-10 text-[var(--lg-muted)]">No suspect records have been created yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section class="lg-card overflow-hidden lg-table-wrap">
   <div class="lg-card-header">Precinct Performance by County</div>
   <table class="lg-table w-full">

@@ -115,6 +115,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 USE_MANIFEST_STATICFILES = (
     os.getenv("USE_MANIFEST_STATICFILES", "False").lower() in ("1", "true", "yes")
     and "test" not in sys.argv

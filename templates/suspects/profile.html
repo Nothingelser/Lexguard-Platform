@@ -16,6 +16,17 @@
   </div>
   <div class="lg-page-hero-aside">
     <div class="lg-hero-aside-card">
+      <span>Suspect image</span>
+      <strong>Visual identification</strong>
+      {% if suspect.photo %}
+      <img src="{{ suspect.photo.url }}" alt="{{ suspect.full_name }}" class="mt-3 w-full max-w-xs h-56 object-cover rounded-2xl border border-[var(--lg-border)]">
+      {% else %}
+      <div class="mt-3 w-full max-w-xs h-56 rounded-2xl border border-dashed border-[var(--lg-border)] bg-[var(--lg-surface)] flex items-center justify-center text-sm text-[var(--lg-muted)]">
+        No photo on record
+      </div>
+      {% endif %}
+    </div>
+    <div class="lg-hero-aside-card">
       <span>Registry status</span>
       <strong>Centralized identity record</strong>
       <p>Updated {{ suspect.updated_at|date:"M d, Y" }}</p>

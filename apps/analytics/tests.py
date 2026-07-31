@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from apps.cases.models import Case
 from apps.stations.models import PoliceStation
+from apps.suspects.models import Suspect
 
 
 User = get_user_model()
@@ -40,6 +41,11 @@ class CommanderDashboardTests(TestCase):
             narrative="Test narrative",
             created_by=self.officer,
         )
+        Suspect.objects.create(
+            national_id="12345678",
+            full_name="Asha Mwinyi",
+            aliases="AM",
+        )
 
     def test_commander_dashboard_is_separate_from_command_console(self):
         self.client.force_login(self.commander)
@@ -55,3 +61,5 @@ class CommanderDashboardTests(TestCase):
         self.assertEqual(command_response.status_code, 200)
         self.assertContains(command_response, "Regional Command Console")
         self.assertContains(command_response, "Regional Geospatial Hotspots")
+        self.assertContains(command_response, "Full Suspect Directory")
+        self.assertContains(command_response, "Asha Mwinyi")

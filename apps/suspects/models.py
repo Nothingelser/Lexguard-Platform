@@ -6,6 +6,7 @@ class Suspect(models.Model):
     full_name = models.CharField(max_length=128)
     aliases = models.CharField(max_length=256, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
+    photo = models.FileField(upload_to="suspects/photos/", blank=True, null=True)
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
