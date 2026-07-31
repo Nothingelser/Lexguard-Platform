@@ -126,6 +126,37 @@
 </section>
 {% endif %}
 
+<section class="lg-card overflow-hidden mb-8">
+  <div class="lg-card-header flex items-center justify-between">
+    <span>Recent Suspect Spotlight</span>
+    <span class="text-xs text-[var(--lg-muted)]">Fast visual review</span>
+  </div>
+  <div class="p-5">
+    <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      {% for suspect in recent_suspects %}
+      <article class="rounded-3xl border border-[var(--lg-border)] bg-[var(--lg-surface)] p-4">
+        <div class="flex items-center gap-4">
+          {% if suspect.photo %}
+          <img src="{{ suspect.photo.url }}" alt="{{ suspect.full_name }}" class="w-16 h-16 rounded-2xl object-cover border border-[var(--lg-border)]">
+          {% else %}
+          <div class="w-16 h-16 rounded-2xl border border-dashed border-[var(--lg-border)] bg-[var(--lg-panel)] flex items-center justify-center text-[10px] text-[var(--lg-muted)]">No photo</div>
+          {% endif %}
+          <div class="min-w-0">
+            <p class="text-xs uppercase tracking-[0.24em] text-[var(--lg-muted)]">Suspect</p>
+            <h3 class="font-semibold truncate">{{ suspect.full_name }}</h3>
+            <p class="text-xs font-mono text-[var(--lg-muted)] mt-1">{{ suspect.national_id }}</p>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <div class="col-span-full rounded-3xl border border-dashed border-[var(--lg-border)] bg-[var(--lg-surface)] p-6 text-sm text-[var(--lg-muted)]">
+        No suspect records have been created yet.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
 <section class="lg-card overflow-hidden mb-8 lg-table-wrap">
   <div class="lg-card-header flex items-center justify-between">
     <span>Full Suspect Directory</span>

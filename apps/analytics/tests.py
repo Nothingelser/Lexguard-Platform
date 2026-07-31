@@ -61,5 +61,6 @@ class CommanderDashboardTests(TestCase):
         self.assertEqual(command_response.status_code, 200)
         self.assertContains(command_response, "Regional Command Console")
         self.assertContains(command_response, "Regional Geospatial Hotspots")
+        self.assertContains(command_response, "Recent Suspect Spotlight")
         self.assertContains(command_response, "Full Suspect Directory")
         self.assertContains(command_response, "Asha Mwinyi")

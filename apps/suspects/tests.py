@@ -89,7 +89,7 @@ class SuspectRegistrationTests(TestCase):
         self.assertRedirects(response, reverse("suspects:profile", args=[suspect.pk]))
         self.assertTrue(suspect.photo.name.startswith("suspects/photos/"))
         profile_response = self.client.get(reverse("suspects:profile", args=[suspect.pk]))
-        self.assertContains(profile_response, "Suspect image")
+        self.assertContains(profile_response, "Identity board")
         self.assertContains(profile_response, suspect.full_name)
 
     def test_commander_cannot_register_suspect(self):

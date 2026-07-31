@@ -89,6 +89,7 @@ def _command_context():
         "max_hotspot": max_hotspot,
         "suspects": Suspect.objects.all().order_by("full_name"),
         "suspect_count": Suspect.objects.count(),
+        "recent_suspects": Suspect.objects.order_by("-updated_at")[:4],
     }
 
 
