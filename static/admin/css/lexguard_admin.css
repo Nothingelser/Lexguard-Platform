@@ -594,7 +594,8 @@ body.lg-admin-light .lg-admin-footer {
 
 /* Hide the main app moon/sun icon inside the admin header */
 #user-tools #theme-toggle,
-#header #theme-toggle {
+#header #theme-toggle,
+body #theme-toggle {
   display: none !important;
 }
 
