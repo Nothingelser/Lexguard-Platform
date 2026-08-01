@@ -367,8 +367,7 @@ def _timestamp(value) -> str:
 
 def _append_line(pdf: Any, text: Any) -> None:
     pdf.set_x(pdf.l_margin)
-    for line in _wrap_pdf_text(pdf, text):
-        pdf.multi_cell(_content_width(pdf), 6, line)
+    pdf.multi_cell(_content_width(pdf), 6, _safe_text(text))
 
 
 def _compact_reference(value: Any, max_length: int = 72) -> str:
