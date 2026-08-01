@@ -13,19 +13,25 @@ from apps.suspects.models import Suspect
 @login_required
 def suspect_search(request):
     query = request.GET.get("q", "").strip()
-    suspects = Suspect.objects.none()
+
     if query:
         suspects = Suspect.objects.filter(
-            Q(national_id__icontains=query) | Q(full_name__icontains=query) | Q(aliases__icontains=query)
+            Q(national_id__icontains=query)
+            | Q(full_name__icontains=query)
+            | Q(aliases__icontains=query)
         )[:20]
     elif request.user.is_commander:
         suspects = Suspect.objects.all().order_by("full_name")
+    elif request.user.is_station_officer and request.user.station_id:
+        # Show suspects already linked to this station's cases on page load
+        suspects = Suspect.objects.filter(
+            case_links__case__station=request.user.station
+        ).distinct().order_by("full_name")
+    else:
+        suspects = Suspect.objects.none()
 
     template = "suspects/partials/search_results.html" if request.htmx else "suspects/search.html"
-    context = {"suspects": suspects, "query": query}
-    if request.user.is_commander:
-        context["all_suspects"] = Suspect.objects.all().order_by("full_name")
-    return render(request, template, context)
+    return render(request, template, {"suspects": suspects, "query": query})
 
 
 @login_required
@@ -75,3 +81,4 @@ def suspect_profile(request, pk):
         "suspects/profile.html",
         {"suspect": suspect, "case_links": links},
     )
+

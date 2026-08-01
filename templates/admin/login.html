@@ -1,0 +1,96 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% if form.errors %}{% translate "Error:" %} {% endif %}{{ block.super }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/login.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login lg-admin-login{% endblock %}
+{% block usertools %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="lg-admin-login-shell">
+  <section class="lg-admin-login-brand" aria-hidden="false">
+    <div class="lg-admin-login-brand__inner">
+      <span class="lg-admin-login-brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" role="img" focusable="false">
+          <path d="M32 4 8 14v16c0 14.4 10.2 27.8 24 30 13.8-2.2 24-15.6 24-30V14L32 4Z" fill="currentColor" opacity="0.16"/>
+          <path d="M32 9 13 17.5v12.5c0 11.6 8.2 22.4 19 24.8 10.8-2.4 19-13.2 19-24.8V17.5L32 9Z" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M24 33 29.5 38.5 41 25.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <p class="lg-admin-kicker">LexGuard Platform</p>
+      <h1>Command Console</h1>
+      <p>Authorized personnel only. Sign in to manage stations, cases, and internal accounts.</p>
+      <ul class="lg-admin-login-points">
+        <li>Personnel provisioning and badge control</li>
+        <li>Investigation records and audit visibility</li>
+        <li>Station registry and configuration</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="lg-admin-login-panel">
+    <div id="content-main" class="lg-admin-login-form-wrap">
+      <header class="lg-admin-login-form__header">
+        <h2>{% translate 'Sign in' %}</h2>
+        <p>Use your staff credentials to access the admin console.</p>
+      </header>
+
+      {% if form.errors and not form.non_field_errors %}
+        <p class="errornote">
+          {% blocktranslate count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+          <p class="errornote">{{ error }}</p>
+        {% endfor %}
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        <p class="errornote">
+          {% blocktranslate trimmed %}
+            You are authenticated as {{ username }}, but are not authorized to
+            access this page. Would you like to login to a different account?
+          {% endblocktranslate %}
+        </p>
+      {% endif %}
+
+      <form action="{{ app_path }}" method="post" id="login-form" class="lg-admin-login-form">
+        {% csrf_token %}
+        <div class="form-row">
+          {{ form.username.errors }}
+          {{ form.username.label_tag }}
+          {{ form.username }}
+        </div>
+        <div class="form-row">
+          {{ form.password.errors }}
+          {{ form.password.label_tag }}
+          {{ form.password }}
+          <input type="hidden" name="next" value="{{ next }}">
+        </div>
+        {% url 'admin_password_reset' as password_reset_url %}
+        {% if password_reset_url %}
+          <div class="password-reset-link">
+            <a href="{{ password_reset_url }}">{% translate 'Forgotten your login credentials?' %}</a>
+          </div>
+        {% endif %}
+        <div class="submit-row">
+          <input type="submit" value="{% translate 'Enter console' %}">
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,305 @@
+/* ============================================================
+   LexGuard Admin — Login (login.css)
+   Applied only to the admin login page
+   ============================================================ */
+
+body.login {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(22, 62, 99, 0.28), transparent 28%),
+    radial-gradient(circle at 82% 24%, rgba(200, 162, 79, 0.1), transparent 24%),
+    linear-gradient(180deg, #050b16 0%, #071122 50%, #04080f 100%) !important;
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+}
+
+body.login::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 90%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Shell layout ─────────────────────────────────────────── */
+.lg-admin-login-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(380px, 0.9fr);
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* ── Left brand panel ─────────────────────────────────────── */
+.lg-admin-login-brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 2rem;
+  border-right: 1px solid rgba(148, 163, 184, 0.12);
+  overflow: hidden;
+}
+
+.lg-admin-login-brand::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 2rem;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: radial-gradient(circle at 35% 28%, rgba(22, 62, 99, 0.22), transparent 38%);
+  pointer-events: none;
+}
+
+.lg-admin-login-brand__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 36rem;
+}
+
+.lg-admin-login-brand__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, #163e63, #1d4ed8);
+  color: #fff;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 20px 48px rgba(22, 62, 99, 0.4);
+}
+
+.lg-admin-login-brand__mark svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.lg-admin-login-brand__inner .lg-admin-kicker {
+  color: rgba(200, 162, 79, 0.9);
+  margin-bottom: 0.5rem;
+}
+
+.lg-admin-login-brand__inner h1 {
+  font-size: clamp(2.4rem, 5vw, 4.2rem) !important;
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  color: #f8fbff !important;
+  margin: 0 0 1rem !important;
+}
+
+.lg-admin-login-brand__inner > p {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: rgba(226, 232, 240, 0.7);
+  max-width: 32rem;
+  margin: 0 0 1.5rem;
+}
+
+.lg-admin-login-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.lg-admin-login-points li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.lg-admin-login-points li::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 9999px;
+  background: #c8a24f;
+  box-shadow: 0 0 0 3px rgba(200, 162, 79, 0.18);
+  flex-shrink: 0;
+}
+
+/* ── Right form panel ─────────────────────────────────────── */
+.lg-admin-login-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.lg-admin-login-form-wrap {
+  width: min(100%, 30rem);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(10, 18, 32, 0.88);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.42);
+  overflow: hidden;
+}
+
+.lg-admin-login-form__header {
+  padding: 1.35rem 1.5rem 1.1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(22, 62, 99, 0.14);
+}
+
+.lg-admin-login-form__header h2 {
+  font-size: 1.35rem !important;
+  font-weight: 700;
+  color: #f8fafc !important;
+  margin: 0 0 0.3rem !important;
+}
+
+.lg-admin-login-form__header p {
+  font-size: 0.82rem;
+  color: rgba(226, 232, 240, 0.56);
+  margin: 0;
+}
+
+/* ── Login form fields ────────────────────────────────────── */
+.lg-admin-login-form {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.lg-admin-login-form .form-row {
+  border-bottom: 0 !important;
+  padding: 0 0 1rem !important;
+}
+
+.lg-admin-login-form label {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(191, 219, 254, 0.78) !important;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.lg-admin-login-form input[type="text"],
+.lg-admin-login-form input[type="password"] {
+  width: 100%;
+  background: rgba(2, 6, 23, 0.55) !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  border-radius: 0.5rem !important;
+  color: #e5eefb !important;
+  font-size: 0.9rem !important;
+  padding: 0.65rem 0.85rem !important;
+  transition: border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.lg-admin-login-form input[type="text"]:focus,
+.lg-admin-login-form input[type="password"]:focus {
+  border-color: rgba(200, 162, 79, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(200, 162, 79, 0.12) !important;
+  outline: none !important;
+}
+
+.lg-admin-login-form .submit-row {
+  margin-top: 0.25rem;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  float: none !important;
+}
+
+.lg-admin-login-form input[type="submit"] {
+  width: 100%;
+  background: linear-gradient(180deg, #163e63, #132d49) !important;
+  border: 1px solid rgba(22, 62, 99, 0.5) !important;
+  border-radius: 0.5rem !important;
+  color: #fff !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  padding: 0.72rem 1rem !important;
+  cursor: pointer;
+  transition: background 0.14s ease;
+  letter-spacing: 0.02em;
+}
+
+.lg-admin-login-form input[type="submit"]:hover {
+  background: linear-gradient(180deg, #1d4ed8, #1e40af) !important;
+}
+
+.lg-admin-login-form .password-reset-link {
+  margin-top: 0.75rem;
+  text-align: right;
+}
+
+.lg-admin-login-form .password-reset-link a {
+  font-size: 0.78rem;
+  color: rgba(200, 162, 79, 0.8) !important;
+  text-decoration: none;
+}
+
+.lg-admin-login-form .password-reset-link a:hover {
+  color: #c8a24f !important;
+}
+
+/* ── Error notes on login ─────────────────────────────────── */
+.lg-admin-login-form-wrap .errornote {
+  margin: 0 1.5rem 1rem;
+}
+
+/* Select fix for login page if ever used */
+.lg-admin-login-form select {
+  background-color: rgba(2, 6, 23, 0.55) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c8a24f' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.65rem center !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  border-radius: 0.5rem !important;
+  color: #e5eefb !important;
+  padding: 0.65rem 2.2rem 0.65rem 0.85rem !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 100%;
+}
+
+.lg-admin-login-form select option {
+  background-color: #0f1c2e;
+  color: #e2e8f0;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .lg-admin-login-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .lg-admin-login-brand {
+    border-right: 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    padding: 2rem 1.5rem;
+  }
+
+  .lg-admin-login-brand__inner h1 {
+    font-size: clamp(2rem, 12vw, 3rem) !important;
+  }
+
+  .lg-admin-login-panel {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .lg-admin-login-form-wrap {
+    border-radius: 0.55rem;
+  }
+
+  .lg-admin-login-form,
+  .lg-admin-login-form__header {
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
+  }
+}

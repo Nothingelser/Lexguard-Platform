@@ -1,0 +1,623 @@
+/* ============================================================
+   LexGuard Admin — Base styles (lexguard_admin.css)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+/* ── Dark mode defaults ───────────────────────────────────── */
+:root {
+  --adm-bg:        #0a1220;
+  --adm-surface:   #0f1c2e;
+  --adm-border:    rgba(148, 163, 184, 0.14);
+  --adm-text:      #e2e8f0;
+  --adm-muted:     rgba(226, 232, 240, 0.54);
+  --adm-gold:      #c8a24f;
+  --adm-gold-soft: rgba(200, 162, 79, 0.14);
+  --adm-accent:    #163e63;
+  --adm-accent2:   #1d4ed8;
+  --adm-input-bg:  #0d1a2d;
+  --adm-mono:      "IBM Plex Mono", Consolas, monospace;
+  --adm-sans:      "Space Grotesk", "Inter", system-ui, sans-serif;
+}
+
+/* ── Light mode variable overrides ───────────────────────── */
+body.lg-admin-light {
+  --adm-bg:        #f1ede4;
+  --adm-surface:   #ffffff;
+  --adm-border:    rgba(22, 62, 99, 0.16);
+  --adm-text:      #1d2838;
+  --adm-muted:     rgba(29, 40, 56, 0.58);
+  --adm-gold:      #7a5208;
+  --adm-gold-soft: rgba(122, 82, 8, 0.1);
+  --adm-input-bg:  #ffffff;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+html, body {
+  background: var(--adm-bg) !important;
+  color: var(--adm-text) !important;
+  font-family: var(--adm-sans) !important;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+#header {
+  background: linear-gradient(180deg, #0b1828, #0a1220) !important;
+  border-bottom: 1px solid var(--adm-border) !important;
+  padding: 0 !important;
+  height: auto !important;
+}
+
+body.lg-admin-light #header {
+  background: linear-gradient(180deg, #ffffff, #f4f0e8) !important;
+}
+
+/* ── Brand ────────────────────────────────────────────────── */
+.lg-admin-brand { padding: 0.7rem 1.25rem; }
+
+.lg-admin-brand__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+}
+
+.lg-admin-brand__mark {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, var(--adm-accent), var(--adm-accent2));
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.lg-admin-brand__mark svg { width: 1.35rem; height: 1.35rem; }
+
+.lg-admin-brand__text { display: flex; flex-direction: column; gap: 0.1rem; }
+
+.lg-admin-brand__text strong {
+  font-family: var(--adm-sans);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--adm-text) !important;
+  letter-spacing: -0.01em;
+}
+
+body.lg-admin-light .lg-admin-brand__text strong { color: #1d2838 !important; }
+
+.lg-admin-brand__tagline {
+  font-family: var(--adm-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  color: var(--adm-muted);
+  text-transform: uppercase;
+}
+
+/* ── Top nav ──────────────────────────────────────────────── */
+.lg-admin-topnav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 1.25rem 0.65rem;
+  flex-wrap: wrap;
+}
+
+.lg-admin-topnav a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.38rem 0.75rem;
+  border-radius: 0.45rem;
+  border: 1px solid transparent;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--adm-muted) !important;
+  text-decoration: none;
+  transition: all 0.14s ease;
+}
+
+.lg-admin-topnav a:hover {
+  background: var(--adm-gold-soft);
+  border-color: rgba(200, 162, 79, 0.2);
+  color: var(--adm-text) !important;
+}
+
+/* ── User tools ───────────────────────────────────────────── */
+#user-tools {
+  color: var(--adm-muted) !important;
+  font-size: 0.78rem;
+  padding: 0.7rem 1.25rem;
+}
+
+#user-tools a { color: var(--adm-gold) !important; text-decoration: none; }
+#user-tools a:hover { color: var(--adm-text) !important; }
+
+/* ── Breadcrumbs ──────────────────────────────────────────── */
+div.breadcrumbs {
+  background: rgba(10, 18, 32, 0.72) !important;
+  border-bottom: 1px solid var(--adm-border) !important;
+  color: var(--adm-muted) !important;
+  font-size: 0.78rem;
+  padding: 0.6rem 1.25rem !important;
+}
+
+body.lg-admin-light div.breadcrumbs {
+  background: rgba(241, 237, 228, 0.95) !important;
+  color: rgba(29, 40, 56, 0.65) !important;
+}
+
+div.breadcrumbs a { color: var(--adm-gold) !important; text-decoration: none; }
+
+/* ── Content area ─────────────────────────────────────────── */
+#content-main, #content {
+  background: transparent !important;
+  color: var(--adm-text) !important;
+}
+
+#content-main h1, #content h1 {
+  font-family: var(--adm-sans);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--adm-text) !important;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+/* ── Modules ──────────────────────────────────────────────── */
+.module, .module table {
+  background: var(--adm-surface) !important;
+  border: 1px solid var(--adm-border) !important;
+  border-radius: 0.55rem !important;
+  color: var(--adm-text) !important;
+}
+
+.module caption, .module h2, .module h3 {
+  background: linear-gradient(180deg, rgba(22, 62, 99, 0.28), rgba(22, 62, 99, 0.12)) !important;
+  color: var(--adm-text) !important;
+  font-family: var(--adm-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.65rem 1rem !important;
+  border-bottom: 1px solid var(--adm-border) !important;
+  border-radius: 0.55rem 0.55rem 0 0 !important;
+}
+
+body.lg-admin-light .module,
+body.lg-admin-light .module table {
+  background: #ffffff !important;
+  border-color: var(--adm-border) !important;
+  color: #1d2838 !important;
+}
+
+body.lg-admin-light .module caption,
+body.lg-admin-light .module h2,
+body.lg-admin-light .module h3 {
+  background: linear-gradient(180deg, rgba(22, 62, 99, 0.07), rgba(22, 62, 99, 0.02)) !important;
+  color: #1d2838 !important;
+}
+
+/* ── Tables ───────────────────────────────────────────────── */
+#result_list, .results table {
+  background: var(--adm-surface) !important;
+  border: 1px solid var(--adm-border) !important;
+  border-radius: 0.55rem !important;
+  overflow: hidden;
+  width: 100%;
+}
+
+#result_list thead th, .results thead th {
+  background: linear-gradient(180deg, rgba(22, 62, 99, 0.22), rgba(22, 62, 99, 0.08)) !important;
+  color: var(--adm-muted) !important;
+  font-family: var(--adm-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--adm-border) !important;
+  padding: 0.65rem 1rem !important;
+}
+
+#result_list thead th a, .results thead th a { color: var(--adm-muted) !important; }
+#result_list thead th a:hover, .results thead th a:hover { color: var(--adm-text) !important; }
+
+#result_list tbody tr, .results tbody tr {
+  border-bottom: 1px solid var(--adm-border) !important;
+}
+
+#result_list tbody tr:last-child, .results tbody tr:last-child { border-bottom: 0 !important; }
+
+#result_list tbody tr:hover, .results tbody tr:hover {
+  background: rgba(22, 62, 99, 0.1) !important;
+}
+
+#result_list td, .results td {
+  color: var(--adm-text) !important;
+  font-size: 0.85rem;
+  padding: 0.7rem 1rem !important;
+  border: none !important;
+}
+
+#result_list td a, .results td a { color: var(--adm-gold) !important; text-decoration: none; }
+#result_list td a:hover, .results td a:hover { color: var(--adm-text) !important; }
+
+body.lg-admin-light #result_list,
+body.lg-admin-light .results table { background: #ffffff !important; }
+
+body.lg-admin-light #result_list thead th,
+body.lg-admin-light .results thead th {
+  background: rgba(22, 62, 99, 0.05) !important;
+  color: rgba(29, 40, 56, 0.6) !important;
+}
+
+body.lg-admin-light #result_list tbody tr:hover,
+body.lg-admin-light .results tbody tr:hover {
+  background: rgba(22, 62, 99, 0.04) !important;
+}
+
+body.lg-admin-light #result_list td,
+body.lg-admin-light .results td { color: #1d2838 !important; }
+
+/* ── Forms ────────────────────────────────────────────────── */
+.form-row {
+  border-bottom: 1px solid var(--adm-border) !important;
+  padding: 0.85rem 1rem !important;
+}
+
+.form-row label {
+  color: var(--adm-muted) !important;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+body.lg-admin-light .form-row { border-bottom-color: var(--adm-border) !important; }
+body.lg-admin-light .form-row label { color: rgba(29, 40, 56, 0.65) !important; }
+
+/* ── Inputs ───────────────────────────────────────────────── */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="url"],
+input[type="date"],
+input[type="datetime-local"],
+textarea {
+  background: var(--adm-input-bg) !important;
+  border: 1px solid var(--adm-border) !important;
+  border-radius: 0.45rem !important;
+  color: var(--adm-text) !important;
+  font-family: var(--adm-sans) !important;
+  font-size: 0.875rem !important;
+  padding: 0.5rem 0.75rem !important;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  border-color: var(--adm-gold) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(200, 162, 79, 0.14) !important;
+}
+
+/* ── Select — key fix: min-width + no clipping ────────────── */
+select {
+  /* Solid background so native option popup is readable */
+  background-color: var(--adm-input-bg) !important;
+  border: 1px solid var(--adm-border) !important;
+  border-radius: 0.45rem !important;
+  color: var(--adm-text) !important;
+  font-family: var(--adm-sans) !important;
+  font-size: 0.875rem !important;
+  /* Keep native arrow — do NOT use appearance:none which causes clipping */
+  padding: 0.45rem 0.5rem !important;
+  min-width: 12rem;
+  max-width: 100%;
+  height: auto !important;
+  line-height: 1.5 !important;
+}
+
+select:focus {
+  border-color: var(--adm-gold) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(200, 162, 79, 0.14) !important;
+}
+
+/* Option list colors — only works in Firefox; Chrome uses OS colors */
+select option {
+  background-color: #0f1c2e;
+  color: #e2e8f0;
+}
+
+body.lg-admin-light select {
+  background-color: #ffffff !important;
+  border-color: rgba(22, 62, 99, 0.2) !important;
+  color: #1d2838 !important;
+}
+
+body.lg-admin-light select option {
+  background-color: #ffffff;
+  color: #1d2838;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input {
+  background: linear-gradient(180deg, #173d63, #132d49) !important;
+  border: 1px solid rgba(22, 62, 99, 0.5) !important;
+  border-radius: 0.45rem !important;
+  color: #fff !important;
+  font-family: var(--adm-sans) !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  padding: 0.5rem 1rem !important;
+  cursor: pointer;
+  transition: background 0.14s ease;
+}
+
+.button:hover,
+input[type="submit"]:hover,
+.submit-row input:hover {
+  background: linear-gradient(180deg, #1d4ed8, #1e40af) !important;
+}
+
+.button.default,
+input[type="submit"].default {
+  background: linear-gradient(180deg, var(--adm-gold), #a07830) !important;
+  border-color: rgba(200, 162, 79, 0.4) !important;
+}
+
+body.lg-admin-light .button.default,
+body.lg-admin-light input[type="submit"].default {
+  background: linear-gradient(180deg, #7a5208, #5c3d06) !important;
+}
+
+.deletelink, .deletelink-box a {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #fca5a5 !important;
+  border-radius: 0.45rem !important;
+  padding: 0.4rem 0.75rem !important;
+  font-size: 0.8rem !important;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+#content-related { background: transparent !important; }
+#content-related .module { background: var(--adm-surface) !important; }
+
+/* ── Pagination ───────────────────────────────────────────── */
+.paginator {
+  color: var(--adm-muted) !important;
+  font-size: 0.8rem;
+  padding: 0.75rem 1rem !important;
+}
+
+.paginator a { color: var(--adm-gold) !important; }
+
+body.lg-admin-light .paginator { color: rgba(29, 40, 56, 0.6) !important; }
+
+/* ── Messages ─────────────────────────────────────────────── */
+ul.messagelist li {
+  border-radius: 0.45rem !important;
+  font-size: 0.85rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+ul.messagelist li.success {
+  background: rgba(5, 150, 105, 0.14) !important;
+  border: 1px solid rgba(5, 150, 105, 0.3) !important;
+  color: #6ee7b7 !important;
+}
+
+ul.messagelist li.warning {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid rgba(245, 158, 11, 0.28) !important;
+  color: #fcd34d !important;
+}
+
+ul.messagelist li.error {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border: 1px solid rgba(239, 68, 68, 0.28) !important;
+  color: #fca5a5 !important;
+}
+
+body.lg-admin-light ul.messagelist li.success { color: #065f46 !important; }
+body.lg-admin-light ul.messagelist li.warning { color: #78350f !important; }
+body.lg-admin-light ul.messagelist li.error   { color: #991b1b !important; }
+
+/* ── Search ───────────────────────────────────────────────── */
+#toolbar {
+  background: rgba(10, 18, 32, 0.6) !important;
+  border-bottom: 1px solid var(--adm-border) !important;
+  padding: 0.65rem 1rem !important;
+}
+
+body.lg-admin-light #toolbar {
+  background: rgba(241, 237, 228, 0.95) !important;
+}
+
+#searchbar {
+  background: var(--adm-input-bg) !important;
+  border: 1px solid var(--adm-border) !important;
+  border-radius: 0.45rem !important;
+  color: var(--adm-text) !important;
+  padding: 0.45rem 0.75rem !important;
+}
+
+/* ── Actions bar ──────────────────────────────────────────── */
+.actions {
+  background: rgba(10, 18, 32, 0.5) !important;
+  border: 1px solid var(--adm-border) !important;
+  border-radius: 0.45rem !important;
+  padding: 0.6rem 1rem !important;
+  margin-bottom: 0.75rem;
+}
+
+body.lg-admin-light .actions {
+  background: rgba(241, 237, 228, 0.7) !important;
+}
+
+/* ── Filter sidebar ───────────────────────────────────────── */
+#changelist-filter {
+  background: var(--adm-surface) !important;
+  border: 1px solid var(--adm-border) !important;
+  border-radius: 0.55rem !important;
+}
+
+#changelist-filter h2 {
+  background: rgba(22, 62, 99, 0.2) !important;
+  color: var(--adm-text) !important;
+  font-size: 0.78rem !important;
+  padding: 0.6rem 1rem !important;
+  border-bottom: 1px solid var(--adm-border) !important;
+}
+
+#changelist-filter h3 {
+  color: var(--adm-muted) !important;
+  font-size: 0.72rem !important;
+  padding: 0.5rem 1rem 0.25rem !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+#changelist-filter ul { padding: 0 0.75rem 0.75rem !important; }
+#changelist-filter li a { color: var(--adm-muted) !important; font-size: 0.82rem; text-decoration: none; }
+#changelist-filter li a:hover,
+#changelist-filter li.selected a { color: var(--adm-gold) !important; }
+
+body.lg-admin-light #changelist-filter { background: #ffffff !important; }
+body.lg-admin-light #changelist-filter h2 {
+  background: rgba(22, 62, 99, 0.06) !important;
+  color: #1d2838 !important;
+}
+body.lg-admin-light #changelist-filter h3 { color: rgba(29, 40, 56, 0.55) !important; }
+body.lg-admin-light #changelist-filter li a { color: rgba(29, 40, 56, 0.65) !important; }
+
+/* ── Help / errors ────────────────────────────────────────── */
+.help, .help-tooltip { color: var(--adm-muted) !important; font-size: 0.78rem !important; }
+body.lg-admin-light .help { color: rgba(29, 40, 56, 0.55) !important; }
+
+.errornote {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border: 1px solid rgba(239, 68, 68, 0.28) !important;
+  border-radius: 0.45rem !important;
+  color: #fca5a5 !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.85rem !important;
+}
+
+body.lg-admin-light .errornote { color: #991b1b !important; }
+
+.errorlist li { color: #fca5a5 !important; font-size: 0.8rem !important; }
+body.lg-admin-light .errorlist li { color: #991b1b !important; }
+
+/* ── Inline admin ─────────────────────────────────────────── */
+.inline-group {
+  background: var(--adm-surface) !important;
+  border: 1px solid var(--adm-border) !important;
+  border-radius: 0.55rem !important;
+  margin-top: 1rem !important;
+}
+
+.inline-group h2 {
+  background: rgba(22, 62, 99, 0.2) !important;
+  color: var(--adm-text) !important;
+  border-radius: 0.55rem 0.55rem 0 0 !important;
+}
+
+body.lg-admin-light .inline-group { background: #ffffff !important; }
+body.lg-admin-light .inline-group h2 {
+  background: rgba(22, 62, 99, 0.06) !important;
+  color: #1d2838 !important;
+}
+
+.add-row a { color: var(--adm-gold) !important; font-size: 0.82rem; }
+
+/* ── Footer ───────────────────────────────────────────────── */
+.lg-admin-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--adm-border);
+  background: rgba(8, 14, 24, 0.8);
+  font-family: var(--adm-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--adm-muted);
+}
+
+.lg-admin-footer__meta { color: rgba(200, 162, 79, 0.7); }
+
+body.lg-admin-light .lg-admin-footer {
+  background: rgba(241, 237, 228, 0.95);
+  border-top-color: var(--adm-border);
+  color: rgba(29, 40, 56, 0.5);
+}
+
+/* ── Kicker ───────────────────────────────────────────────── */
+.lg-admin-kicker {
+  font-family: var(--adm-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--adm-gold);
+  margin-bottom: 0.35rem;
+}
+
+/* ── Theme toggle button ──────────────────────────────────── */
+.lg-admin-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.32rem 0.65rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--adm-border);
+  background: transparent;
+  color: var(--adm-muted);
+  font-family: var(--adm-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  margin-left: auto;
+}
+
+.lg-admin-theme-toggle:hover {
+  border-color: var(--adm-gold);
+  color: var(--adm-gold);
+}
+
+/* Hide the main app moon/sun icon inside the admin header */
+#user-tools #theme-toggle,
+#header #theme-toggle {
+  display: none !important;
+}
+
+
+@media (max-width: 767px) {
+  .lg-admin-topnav {
+    padding: 0 0.85rem 0.55rem;
+    gap: 0.2rem;
+  }
+
+  .lg-admin-topnav a {
+    font-size: 0.74rem;
+    padding: 0.32rem 0.6rem;
+  }
+
+  .lg-admin-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  select {
+    min-width: 0;
+    width: 100%;
+  }
+}

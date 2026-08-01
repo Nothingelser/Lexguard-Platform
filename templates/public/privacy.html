@@ -1,0 +1,75 @@
+﻿{% extends "base.html" %}
+{% load static %}
+{% block title %}Privacy Policy - LexGuard{% endblock %}
+{% block body %}
+<div class="lg-home-canvas">
+  <div class="lg-home-grid" aria-hidden="true"></div>
+  <div class="lg-home-shell">
+    <header class="lg-home-topbar">
+      <a href="/" class="lg-home-brand">
+        <img src="{% static 'images/Logo.jpg' %}" alt="LexGuard" class="lg-home-brand-mark">
+        <span class="lg-home-brand-text">
+          <strong>LexGuard</strong>
+          <em>Coast Region secure network</em>
+        </span>
+      </a>
+      <a href="{% url 'accounts:login' %}" class="lg-home-topbar-link">Sign in</a>
+    </header>
+
+    <main style="max-width:52rem;margin:0 auto;padding:2rem 0 3rem">
+      <p class="lg-home-kicker" style="margin-bottom:0.75rem">Legal</p>
+      <h1 style="font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-0.03em;color:#f8fbff;margin-bottom:0.5rem">Privacy Policy</h1>
+      <p style="color:rgba(226,232,240,0.6);font-size:0.85rem;margin-bottom:2.5rem">Effective date: January 1, 2026</p>
+
+      <div style="display:grid;gap:2rem;color:rgba(226,232,240,0.82);line-height:1.8;font-size:0.95rem">
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">1. Data Controller</h2>
+          <p>The Kenya Police Service, Coast Region Command, operates LexGuard as an internal law enforcement tool. For data-related enquiries, contact the Regional Data Protection Officer through official service channels.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">2. Data We Collect</h2>
+          <p>LexGuard collects and stores: officer badge numbers, names, and station assignments for authentication and audit purposes; case records including incident details, locations, crime categories, and narratives; suspect profiles including national ID numbers, names, aliases, and photographs; evidence logs and witness statements; and system audit logs recording all user actions with timestamps.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">3. Legal Basis for Processing</h2>
+          <p>Data is processed under the lawful authority of the National Police Service Act (Cap. 84), the Kenya Data Protection Act 2019, and applicable regulations governing law enforcement record-keeping. Processing is necessary for the performance of official law enforcement duties in the public interest.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">4. Data Retention</h2>
+          <p>Case records and associated data are retained in accordance with the National Archives and Documentation Service Act and internal Kenya Police Service records management policies. Audit logs are retained indefinitely as immutable records of official activity.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">5. Data Sharing</h2>
+          <p>Data held in LexGuard is not shared with commercial third parties. Access is restricted to authorized Kenya Police Service personnel within the Coast Region. Data may be disclosed to other law enforcement agencies, courts, or oversight bodies where required by law or court order.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">6. Security</h2>
+          <p>LexGuard employs role-based access control, badge-number authentication, forced password changes on first login, tenant isolation between stations, and full audit logging. Data in transit is protected by TLS encryption. Access to production infrastructure is restricted to authorized administrators.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">7. Your Rights</h2>
+          <p>Subject to applicable law enforcement exemptions under the Kenya Data Protection Act 2019, individuals may have rights to access, correct, or request erasure of personal data held about them. Requests should be directed to the Regional Data Protection Officer through official channels.</p>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="lg-home-footer">
+      <span>LexGuard &middot; Coast Region</span>
+      <span style="display:flex;gap:1.5rem">
+        <a href="{% url 'legal_terms' %}" style="color:rgba(226,232,240,0.6)">Terms</a>
+        <a href="{% url 'legal_privacy' %}" style="color:rgba(226,232,240,0.6)">Privacy</a>
+        <a href="{% url 'legal_license' %}" style="color:rgba(226,232,240,0.6)">License</a>
+      </span>
+    </footer>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,324 @@
+/* ============================================================
+   LexGuard Admin — Dashboard (dashboard.css)
+   Applied only to the admin index page
+   ============================================================ */
+
+/* ── Hero banner ──────────────────────────────────────────── */
+.lg-admin-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid rgba(200, 162, 79, 0.18);
+  border-radius: 0.65rem;
+  background:
+    linear-gradient(135deg, rgba(200, 162, 79, 0.07), rgba(22, 62, 99, 0.04)),
+    rgba(15, 28, 46, 0.9);
+}
+
+.lg-admin-hero__copy h1 {
+  font-size: 1.55rem !important;
+  font-weight: 700;
+  color: #f8fafc !important;
+  letter-spacing: -0.02em;
+  margin: 0.2rem 0 0.45rem !important;
+}
+
+.lg-admin-hero__copy p {
+  font-size: 0.88rem;
+  color: rgba(226, 232, 240, 0.68);
+  line-height: 1.6;
+  max-width: 44rem;
+  margin: 0;
+}
+
+.lg-admin-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding-top: 0.2rem;
+}
+
+/* ── Action pills ─────────────────────────────────────────── */
+.lg-admin-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(22, 62, 99, 0.22);
+  color: #e2e8f0 !important;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.14s ease;
+  white-space: nowrap;
+}
+
+.lg-admin-pill:hover {
+  background: rgba(22, 62, 99, 0.42);
+  border-color: rgba(148, 163, 184, 0.35);
+  color: #f8fafc !important;
+}
+
+.lg-admin-pill--gold {
+  background: rgba(200, 162, 79, 0.14);
+  border-color: rgba(200, 162, 79, 0.28);
+  color: #e8c97a !important;
+}
+
+.lg-admin-pill--gold:hover {
+  background: rgba(200, 162, 79, 0.24);
+  color: #f8fafc !important;
+}
+
+.lg-admin-pill--ghost {
+  background: transparent;
+  border-color: rgba(148, 163, 184, 0.16);
+  color: rgba(226, 232, 240, 0.62) !important;
+}
+
+.lg-admin-pill--ghost:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #f8fafc !important;
+}
+
+/* ── App grid ─────────────────────────────────────────────── */
+.lg-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 0.85rem;
+}
+
+/* ── App cards ────────────────────────────────────────────── */
+.lg-admin-card {
+  background: rgba(15, 28, 46, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 0.65rem;
+  overflow: hidden;
+  transition: border-color 0.14s ease;
+}
+
+.lg-admin-card:hover {
+  border-color: rgba(200, 162, 79, 0.22);
+}
+
+.lg-admin-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  background: linear-gradient(180deg, rgba(22, 62, 99, 0.18), transparent);
+}
+
+.lg-admin-card__icon {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background: rgba(200, 162, 79, 0.1);
+  color: #c8a24f;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.lg-admin-card__header h2 {
+  font-size: 0.95rem !important;
+  font-weight: 700;
+  margin: 0 0 0.2rem !important;
+  color: #f8fafc !important;
+}
+
+.lg-admin-card__header h2 a {
+  color: #f8fafc !important;
+  text-decoration: none;
+}
+
+.lg-admin-card__header h2 a:hover {
+  color: #c8a24f !important;
+}
+
+.lg-admin-card__subtitle {
+  font-size: 0.76rem;
+  color: rgba(226, 232, 240, 0.52);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Model rows ───────────────────────────────────────────── */
+.lg-admin-card__models {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0;
+}
+
+.lg-admin-model-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.07);
+}
+
+.lg-admin-model-row:last-child {
+  border-bottom: 0;
+}
+
+.lg-admin-model-name {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #c8d8ec !important;
+  text-decoration: none;
+}
+
+.lg-admin-model-name:hover {
+  color: #c8a24f !important;
+}
+
+.lg-admin-model-name--disabled {
+  color: rgba(226, 232, 240, 0.38) !important;
+}
+
+.lg-admin-model-link__actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.lg-admin-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.26rem 0.6rem;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(22, 62, 99, 0.18);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.72) !important;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: all 0.12s ease;
+}
+
+.lg-admin-chip:hover {
+  background: rgba(22, 62, 99, 0.38);
+  color: #f8fafc !important;
+  border-color: rgba(148, 163, 184, 0.28);
+}
+
+.lg-admin-chip--muted {
+  background: transparent;
+  border-color: rgba(148, 163, 184, 0.1);
+  color: rgba(226, 232, 240, 0.48) !important;
+}
+
+.lg-admin-chip--muted:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(226, 232, 240, 0.8) !important;
+}
+
+.lg-admin-card__empty {
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: rgba(226, 232, 240, 0.38);
+}
+
+.lg-admin-empty {
+  grid-column: 1 / -1;
+  padding: 1.5rem;
+  text-align: center;
+  color: rgba(226, 232, 240, 0.42);
+  font-size: 0.88rem;
+}
+
+/* ── Recent actions sidebar ───────────────────────────────── */
+.lg-admin-sidepanel {
+  padding-left: 0.85rem;
+}
+
+.lg-admin-panel {
+  background: rgba(15, 28, 46, 0.88) !important;
+  border: 1px solid rgba(148, 163, 184, 0.14) !important;
+  border-radius: 0.65rem !important;
+}
+
+.lg-admin-panel h2 {
+  font-size: 0.82rem !important;
+  font-weight: 600;
+  color: #f8fafc !important;
+  padding: 0.75rem 1rem !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1) !important;
+  background: rgba(22, 62, 99, 0.16) !important;
+  border-radius: 0.65rem 0.65rem 0 0 !important;
+}
+
+.lg-admin-panel__intro {
+  font-size: 0.76rem;
+  color: rgba(226, 232, 240, 0.5);
+  padding: 0.55rem 1rem 0;
+  margin: 0;
+}
+
+.lg-admin-panel__empty {
+  font-size: 0.8rem;
+  color: rgba(226, 232, 240, 0.38);
+  padding: 0.75rem 1rem;
+  margin: 0;
+}
+
+.lg-admin-actionlist {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0;
+}
+
+.lg-admin-actionlist li {
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.07);
+  font-size: 0.82rem;
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.lg-admin-actionlist li:last-child {
+  border-bottom: 0;
+}
+
+.lg-admin-actionlist li a {
+  color: #c8a24f !important;
+  text-decoration: none;
+}
+
+.lg-admin-actionlist li a:hover {
+  color: #f8fafc !important;
+}
+
+.lg-admin-actionlist .mini {
+  display: block;
+  font-size: 0.68rem;
+  color: rgba(226, 232, 240, 0.38);
+  margin-top: 0.15rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .lg-admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lg-admin-hero {
+    flex-direction: column;
+  }
+
+  .lg-admin-hero__actions {
+    width: 100%;
+  }
+}

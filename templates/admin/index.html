@@ -1,0 +1,107 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard lg-admin-dashboard{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block content %}
+<section class="lg-admin-hero">
+  <div class="lg-admin-hero__copy">
+    <p class="lg-admin-kicker">Command surface</p>
+    <h1>{{ index_title|default:"Operations Dashboard" }}</h1>
+    <p>Provision personnel, oversee investigations, and review audit activity from a single internal console.</p>
+  </div>
+  <div class="lg-admin-hero__actions">
+    <a href="{% url 'admin:accounts_user_personnel_control' %}" class="lg-admin-pill lg-admin-pill--gold">Personnel Control</a>
+    <a href="{% url 'admin:cases_case_add' %}" class="lg-admin-pill">New Case Record</a>
+    <a href="{% url 'dashboard' %}" class="lg-admin-pill lg-admin-pill--ghost">Open Field App</a>
+  </div>
+</section>
+
+<div id="content-main" class="lg-admin-grid">
+  {% for app in app_list %}
+    <article class="lg-admin-card lg-admin-card--{{ app.app_label }}">
+      <header class="lg-admin-card__header">
+        <span class="lg-admin-card__icon" aria-hidden="true">
+          {% if app.app_label == "accounts" %}&#9670;{% elif app.app_label == "cases" %}&#9673;{% elif app.app_label == "stations" %}&#9650;{% elif app.app_label == "suspects" %}&#9671;{% else %}&#9632;{% endif %}
+        </span>
+        <div>
+          <h2><a href="{{ app.app_url }}">{{ app.name }}</a></h2>
+          <p class="lg-admin-card__subtitle">
+            {% if app.app_label == "accounts" %}Roles, badges, and access control
+            {% elif app.app_label == "cases" %}Investigations, evidence, and audit trails
+            {% elif app.app_label == "stations" %}Regional station registry
+            {% elif app.app_label == "suspects" %}Suspect profiles and identifiers
+            {% else %}Registered models and records{% endif %}
+          </p>
+        </div>
+      </header>
+      <ul class="lg-admin-card__models">
+        {% for model in app.models %}
+          <li class="lg-admin-model-row">
+            {% if model.admin_url %}
+              <a href="{{ model.admin_url }}" class="lg-admin-model-name">{{ model.name }}</a>
+            {% else %}
+              <span class="lg-admin-model-name lg-admin-model-name--disabled">{{ model.name }}</span>
+            {% endif %}
+            <span class="lg-admin-model-link__actions">
+              {% if model.add_url %}
+                <a href="{{ model.add_url }}" class="lg-admin-chip">Add</a>
+              {% endif %}
+              {% if model.admin_url %}
+                <a href="{{ model.admin_url }}" class="lg-admin-chip lg-admin-chip--muted">Manage</a>
+              {% endif %}
+            </span>
+          </li>
+        {% empty %}
+          <li class="lg-admin-card__empty">No models available in this section.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  {% empty %}
+    <p class="lg-admin-empty">You do not have permission to view or edit anything.</p>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related" class="lg-admin-sidepanel">
+  <div class="module lg-admin-panel" id="recent-actions-module">
+    <h2>{% translate 'Recent actions' %}</h2>
+    <p class="lg-admin-panel__intro">Latest changes recorded under your account.</p>
+    {% load log %}
+    {% get_admin_log 12 as admin_log for_user user %}
+    {% if not admin_log %}
+      <p class="lg-admin-panel__empty">{% translate 'None available' %}</p>
+    {% else %}
+      <ul class="actionlist lg-admin-actionlist">
+        {% for entry in admin_log %}
+          <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+            <span class="visually-hidden">
+              {% if entry.is_addition %}{% translate 'Added:' %}{% elif entry.is_change %}{% translate 'Changed:' %}{% elif entry.is_deletion %}{% translate 'Deleted:' %}{% endif %}
+            </span>
+            {% if entry.is_deletion or not entry.get_admin_url %}
+              {{ entry.object_repr }}
+            {% else %}
+              <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+            {% endif %}
+            {% if entry.content_type %}
+              <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+            {% else %}
+              <span class="mini quiet">{% translate 'Unknown content' %}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

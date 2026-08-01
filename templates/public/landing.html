@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load static %}
 
 {% block title %}LexGuard | Coast Region Secure Network{% endblock %}
@@ -84,8 +84,13 @@
     <footer class="lg-home-footer">
       <span>LexGuard</span>
       <span>Coast Region multi-county network</span>
-      <span>Badge-based access required</span>
+      <span style="display:flex;gap:1.25rem">
+        <a href="{% url 'legal_terms' %}" style="color:rgba(226,232,240,0.5)">Terms</a>
+        <a href="{% url 'legal_privacy' %}" style="color:rgba(226,232,240,0.5)">Privacy</a>
+        <a href="{% url 'legal_license' %}" style="color:rgba(226,232,240,0.5)">License</a>
+      </span>
     </footer>
   </div>
 </div>
 {% endblock %}
+

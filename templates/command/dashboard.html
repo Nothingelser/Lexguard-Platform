@@ -9,7 +9,7 @@
 </nav>
 {% endblock %}
 {% block content %}
-<div id="command-dashboard-live" hx-get="{{ request.get_full_path }}" hx-trigger="load, every 30s" hx-select="#command-dashboard-live" hx-swap="outerHTML">
+<div id="command-dashboard-live">
 <section class="lg-page-hero">
   <div class="lg-page-hero-content">
     <p class="lg-page-hero-kicker">Regional command</p>
@@ -19,7 +19,7 @@
       <a href="{% url 'analytics:alerts' %}" class="lg-btn lg-btn-primary">
         MO Alerts {% if alert_count %}<span class="lg-badge px-2 py-0.5 rounded-full text-xs">{{ alert_count }}</span>{% endif %}
       </a>
-      {% if perms.cases.add_case %}
+      {% if can_add_case %}
       <a href="{% url 'cases:create' %}" class="lg-btn lg-btn-secondary">Open Case Entry</a>
       {% endif %}
       <a href="{% url 'analytics:export_csv' %}" class="lg-btn lg-btn-secondary">Export CSV</a>
@@ -170,7 +170,7 @@
     <table class="lg-table w-full">
       <thead>
         <tr>
-          <th>Photo</th>
+          <th style="width:4rem">Photo</th>
           <th>National ID</th>
           <th>Full Name</th>
           <th>Aliases</th>
@@ -180,11 +180,11 @@
       <tbody>
         {% for suspect in suspects %}
         <tr>
-          <td>
+          <td style="width:4rem;padding:0.5rem 1rem">
             {% if suspect.photo %}
-            <img src="{{ suspect.photo.url }}" alt="{{ suspect.full_name }}" class="w-12 h-12 object-cover rounded-xl border border-[var(--lg-border)]">
+            <img src="{{ suspect.photo.url }}" alt="{{ suspect.full_name }}" style="width:3rem;height:3rem;object-fit:cover;border-radius:0.75rem;border:1px solid var(--lg-border);display:block">
             {% else %}
-            <div class="w-12 h-12 rounded-xl border border-dashed border-[var(--lg-border)] bg-[var(--lg-surface)] flex items-center justify-center text-[10px] text-[var(--lg-muted)]">No photo</div>
+            <div style="width:3rem;height:3rem;border-radius:0.75rem;border:1px dashed var(--lg-border);display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--lg-muted)">None</div>
             {% endif %}
           </td>
           <td class="font-mono text-sm">{{ suspect.national_id }}</td>

@@ -1,0 +1,76 @@
+﻿{% extends "base.html" %}
+{% load static %}
+{% block title %}License - LexGuard{% endblock %}
+{% block body %}
+<div class="lg-home-canvas">
+  <div class="lg-home-grid" aria-hidden="true"></div>
+  <div class="lg-home-shell">
+    <header class="lg-home-topbar">
+      <a href="/" class="lg-home-brand">
+        <img src="{% static 'images/Logo.jpg' %}" alt="LexGuard" class="lg-home-brand-mark">
+        <span class="lg-home-brand-text">
+          <strong>LexGuard</strong>
+          <em>Coast Region secure network</em>
+        </span>
+      </a>
+      <a href="{% url 'accounts:login' %}" class="lg-home-topbar-link">Sign in</a>
+    </header>
+
+    <main style="max-width:52rem;margin:0 auto;padding:2rem 0 3rem">
+      <p class="lg-home-kicker" style="margin-bottom:0.75rem">Legal</p>
+      <h1 style="font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-0.03em;color:#f8fbff;margin-bottom:0.5rem">Software License</h1>
+      <p style="color:rgba(226,232,240,0.6);font-size:0.85rem;margin-bottom:2.5rem">LexGuard Platform &mdash; Proprietary License</p>
+
+      <div style="display:grid;gap:2rem;color:rgba(226,232,240,0.82);line-height:1.8;font-size:0.95rem">
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">Ownership</h2>
+          <p>LexGuard is proprietary software developed for and owned by the Kenya Police Service, Coast Region Command. All source code, design assets, data models, and documentation are the exclusive intellectual property of the Kenya Police Service.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">Permitted Use</h2>
+          <p>This software is licensed solely for internal use by authorized Kenya Police Service personnel within the Coast Region. No rights are granted to copy, modify, distribute, sublicense, sell, or deploy this software outside of its intended operational environment without explicit written authorization from the Kenya Police Service.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">Restrictions</h2>
+          <p>You may not: reverse engineer, decompile, or disassemble any part of this software; remove or alter any proprietary notices or labels; use the software to develop competing products; or grant any third party access to the software or its underlying systems without authorization.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">Open Source Components</h2>
+          <p>LexGuard incorporates the following open source software, each governed by their respective licenses:</p>
+          <ul style="margin-top:0.75rem;display:grid;gap:0.5rem;padding-left:1.25rem;list-style:disc">
+            <li>Django &mdash; BSD 3-Clause License</li>
+            <li>django-htmx &mdash; MIT License</li>
+            <li>WhiteNoise &mdash; MIT License</li>
+            <li>HTMX &mdash; Zero-Clause BSD License</li>
+            <li>Chart.js &mdash; MIT License</li>
+            <li>fpdf2 &mdash; LGPL License</li>
+            <li>openpyxl &mdash; MIT License</li>
+            <li>psycopg2 &mdash; LGPL License</li>
+          </ul>
+          <p style="margin-top:0.75rem">Use of these components does not grant any rights to the LexGuard platform as a whole beyond those stated above.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">Disclaimer of Warranty</h2>
+          <p>This software is provided for official operational use. The Kenya Police Service makes no warranties, express or implied, beyond those required by applicable law. The software is provided in its operational state and users accept responsibility for correct and lawful use.</p>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="lg-home-footer">
+      <span>LexGuard &middot; Coast Region</span>
+      <span style="display:flex;gap:1.5rem">
+        <a href="{% url 'legal_terms' %}" style="color:rgba(226,232,240,0.6)">Terms</a>
+        <a href="{% url 'legal_privacy' %}" style="color:rgba(226,232,240,0.6)">Privacy</a>
+        <a href="{% url 'legal_license' %}" style="color:rgba(226,232,240,0.6)">License</a>
+      </span>
+    </footer>
+  </div>
+</div>
+{% endblock %}
+

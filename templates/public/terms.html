@@ -1,0 +1,75 @@
+﻿{% extends "base.html" %}
+{% load static %}
+{% block title %}Terms of Service - LexGuard{% endblock %}
+{% block body %}
+<div class="lg-home-canvas">
+  <div class="lg-home-grid" aria-hidden="true"></div>
+  <div class="lg-home-shell">
+    <header class="lg-home-topbar">
+      <a href="/" class="lg-home-brand">
+        <img src="{% static 'images/Logo.jpg' %}" alt="LexGuard" class="lg-home-brand-mark">
+        <span class="lg-home-brand-text">
+          <strong>LexGuard</strong>
+          <em>Coast Region secure network</em>
+        </span>
+      </a>
+      <a href="{% url 'accounts:login' %}" class="lg-home-topbar-link">Sign in</a>
+    </header>
+
+    <main style="max-width:52rem;margin:0 auto;padding:2rem 0 3rem">
+      <p class="lg-home-kicker" style="margin-bottom:0.75rem">Legal</p>
+      <h1 style="font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-0.03em;color:#f8fbff;margin-bottom:0.5rem">Terms of Service</h1>
+      <p style="color:rgba(226,232,240,0.6);font-size:0.85rem;margin-bottom:2.5rem">Effective date: January 1, 2026</p>
+
+      <div style="display:grid;gap:2rem;color:rgba(226,232,240,0.82);line-height:1.8;font-size:0.95rem">
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">1. Authorized Use Only</h2>
+          <p>LexGuard is a restricted-access law enforcement case management platform operated by the Kenya Police Service, Coast Region. Access is granted exclusively to authorized personnel holding a valid badge number issued by the service. Unauthorized access, attempted access, or misuse of credentials is a criminal offence under the Kenya Information and Communications Act and the Computer Misuse and Cybercrimes Act.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">2. Account Responsibility</h2>
+          <p>Each user is personally responsible for all activity conducted under their badge number. Credentials must not be shared, transferred, or disclosed to any third party. Users must change their temporary password upon first login. Suspected compromise of credentials must be reported immediately to the system administrator.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">3. Data Handling</h2>
+          <p>All case records, suspect profiles, evidence logs, and audit trails entered into LexGuard are official police records. Users must ensure that data entered is accurate, lawfully obtained, and handled in accordance with the National Police Service Act and applicable data protection legislation. Records may not be exported, copied, or shared outside authorized channels.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">4. Audit and Monitoring</h2>
+          <p>All actions performed within LexGuard are logged with a timestamp, user badge number, and action detail. These logs are immutable and may be reviewed by command-level personnel and system administrators at any time. Users have no expectation of privacy in their use of this system.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">5. Prohibited Actions</h2>
+          <p>Users must not: access records outside their assigned station jurisdiction without command authorization; attempt to circumvent role-based access controls; introduce malicious code or unauthorized software; use the platform for any purpose unrelated to official police duties; or attempt to delete, alter, or falsify official records.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">6. Termination of Access</h2>
+          <p>Access may be suspended or revoked at any time by a system administrator or commanding officer without prior notice, including upon resignation, transfer, suspension, or dismissal from service, or upon reasonable suspicion of misuse.</p>
+        </section>
+
+        <section>
+          <h2 style="color:#f8fbff;font-size:1.05rem;font-weight:700;margin-bottom:0.5rem">7. Governing Law</h2>
+          <p>These terms are governed by the laws of the Republic of Kenya. Any disputes arising from use of this platform shall be subject to the jurisdiction of Kenyan courts.</p>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="lg-home-footer">
+      <span>LexGuard &middot; Coast Region</span>
+      <span style="display:flex;gap:1.5rem">
+        <a href="{% url 'legal_terms' %}" style="color:rgba(226,232,240,0.6)">Terms</a>
+        <a href="{% url 'legal_privacy' %}" style="color:rgba(226,232,240,0.6)">Privacy</a>
+        <a href="{% url 'legal_license' %}" style="color:rgba(226,232,240,0.6)">License</a>
+      </span>
+    </footer>
+  </div>
+</div>
+{% endblock %}
+

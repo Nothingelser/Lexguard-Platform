@@ -63,9 +63,9 @@
   </form>
 
   {% if renumber_preview %}
-  <div style="margin-top: 1rem;">
+  <div class="lg-admin-renumber-preview">
     <h3>Preview</h3>
-    <table style="width: 100%; border-collapse: collapse;">
+    <table class="lg-admin-preview-table">
       <thead>
         <tr>
           <th align="left">Current</th>
@@ -86,7 +86,7 @@
       </tbody>
     </table>
 
-    <form method="post" style="margin-top: 1rem;">
+    <form method="post" class="lg-admin-renumber-apply">
       {% csrf_token %}
       <input type="hidden" name="renumber_badges" value="1">
       <input type="hidden" name="scope" value="{{ renumber_form.scope.value }}">

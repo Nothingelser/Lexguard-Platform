@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load case_tags %}
-{% block title %}Case Registry â€” LexGuard{% endblock %}
+{% block title %}Case Registry - LexGuard{% endblock %}
 {% block breadcrumbs %}
 <nav class="lg-breadcrumb mb-6">
   <a href="{% url 'dashboard' %}">Dashboard</a> / Case Register
@@ -9,3 +9,4 @@
 {% block content %}
 {% include "cases/partials/case_list_shell.html" %}
 {% endblock %}
+

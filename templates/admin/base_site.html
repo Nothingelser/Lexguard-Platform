@@ -1,0 +1,71 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="icon" type="image/jpeg" href="{% static 'images/Logo.jpg' %}">
+<link rel="stylesheet" href="{% static 'admin/css/lexguard_admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div class="lg-admin-brand">
+  <a href="{% url 'admin:index' %}" class="lg-admin-brand__link">
+    <span class="lg-admin-brand__mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" role="img" focusable="false">
+        <path d="M16 2 4 8v8c0 7.2 5.1 13.9 12 15 6.9-1.1 12-7.8 12-15V8L16 2Z" fill="currentColor" opacity="0.18"/>
+        <path d="M16 4.5 6.5 9.5v6.5c0 5.8 4.1 11.2 9.5 12.4 5.4-1.2 9.5-6.6 9.5-12.4V9.5L16 4.5Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M12 16.5 15 19.5 21 12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="lg-admin-brand__text">
+      <strong>{{ site_header|default:_('Django administration') }}</strong>
+      <span class="lg-admin-brand__tagline">Secure internal operations</span>
+    </span>
+  </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<nav class="lg-admin-topnav" aria-label="Admin shortcuts">
+  <a href="{% url 'admin:index' %}">Dashboard</a>
+  <a href="{% url 'admin:accounts_user_changelist' %}">Personnel</a>
+  <a href="{% url 'admin:cases_case_changelist' %}">Cases</a>
+  <a href="{% url 'dashboard' %}">Field App</a>
+  <button class="lg-admin-theme-toggle" id="lg-admin-theme-btn" type="button" aria-label="Toggle light/dark mode">
+    <svg id="lg-adm-icon-moon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg id="lg-adm-icon-sun" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <span id="lg-adm-theme-label">Light</span>
+  </button>
+</nav>
+<script>
+(function(){
+  var STORAGE_KEY = 'lg-admin-theme';
+  var btn = document.getElementById('lg-admin-theme-btn');
+  var iconMoon = document.getElementById('lg-adm-icon-moon');
+  var iconSun = document.getElementById('lg-adm-icon-sun');
+  var label = document.getElementById('lg-adm-theme-label');
+  function apply(theme) {
+    var isLight = theme === 'light';
+    document.body.classList.toggle('lg-admin-light', isLight);
+    iconMoon.style.display = isLight ? 'none' : '';
+    iconSun.style.display = isLight ? '' : 'none';
+    label.textContent = isLight ? 'Dark' : 'Light';
+  }
+  apply(localStorage.getItem(STORAGE_KEY) || 'dark');
+  btn.addEventListener('click', function(){
+    var next = document.body.classList.contains('lg-admin-light') ? 'dark' : 'light';
+    localStorage.setItem(STORAGE_KEY, next);
+    apply(next);
+  });
+})();
+</script>
+{% endblock %}
+
+{% block footer %}
+<div class="lg-admin-footer">
+  <span>LexGuard Platform &middot; Internal administration only</span>
+  <span class="lg-admin-footer__meta">Africa/Nairobi &middot; {% now "Y" %}</span>
+</div>
+{% endblock %}

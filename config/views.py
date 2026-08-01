@@ -20,6 +20,18 @@ def home(request):
     return station_dashboard(request)
 
 
+def legal_terms(request):
+    return render(request, "public/terms.html")
+
+
+def legal_privacy(request):
+    return render(request, "public/privacy.html")
+
+
+def legal_license(request):
+    return render(request, "public/license.html")
+
+
 def static_asset(request, path):
     full_path = finders.find(path)
     if not full_path:

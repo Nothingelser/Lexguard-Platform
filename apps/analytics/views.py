@@ -47,6 +47,7 @@ def station_dashboard(request):
             "recent_cases": recent,
             "activity": activity,
             "category_json": json.dumps({c["crime_category"]: c["count"] for c in categories}),
+            "can_add_case": True,
         },
     )
 
@@ -89,7 +90,7 @@ def _command_context():
         "max_hotspot": max_hotspot,
         "suspects": Suspect.objects.all().order_by("full_name"),
         "suspect_count": Suspect.objects.count(),
-        "recent_suspects": Suspect.objects.order_by("-updated_at")[:4],
+        "recent_suspects": Suspect.objects.order_by("-updated_at")[:4], "can_add_case": False,
     }
 
 

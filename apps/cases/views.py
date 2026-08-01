@@ -64,6 +64,7 @@ def case_list(request):
         "search_query": request.GET.get("q", ""),
         "status_choices": CaseStatus.choices,
         "category_choices": CrimeCategory.choices,
+        "can_add_case": can_add_case(request.user),
     }
     template = "cases/partials/case_list_shell.html" if request.htmx else "cases/case_list.html"
     return render(request, template, context)

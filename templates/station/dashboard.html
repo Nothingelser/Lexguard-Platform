@@ -8,14 +8,14 @@
 <nav class="lg-breadcrumb mb-6">Dashboard</nav>
 {% endblock %}
 {% block content %}
-<div id="station-dashboard-live" hx-get="{{ request.get_full_path }}" hx-trigger="load, every 30s" hx-select="#station-dashboard-live" hx-swap="outerHTML">
+<div id="station-dashboard-live">
 <section class="lg-page-hero">
   <div class="lg-page-hero-content">
     <p class="lg-page-hero-kicker">Station workspace</p>
     <h1 class="lg-page-hero-title">{{ station.name }}</h1>
     <p class="lg-page-hero-copy">{{ station.region }} Region &middot; {{ station.county }} County &middot; {{ station.code }}. Local case intake, audit trace, and station-level control.</p>
     <div class="lg-page-hero-actions">
-      {% if perms.cases.add_case %}
+      {% if can_add_case %}
       <a href="{% url 'cases:create' %}" class="lg-btn lg-btn-primary">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
         Register Case
@@ -128,3 +128,5 @@
 </script>
 </div>
 {% endblock %}
+
+

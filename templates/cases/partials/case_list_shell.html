@@ -2,7 +2,7 @@
 <div id="case-list-shell" hx-get="{{ request.get_full_path }}" hx-trigger="load, every 30s" hx-select="#case-list-shell" hx-swap="outerHTML">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
     <h1 class="text-2xl font-bold">Case Register</h1>
-    {% if perms.cases.add_case %}
+    {% if can_add_case %}
     <a href="{% url 'cases:create' %}" class="lg-btn lg-btn-primary">Register Case</a>
     {% endif %}
   </div>
