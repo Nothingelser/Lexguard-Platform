@@ -96,6 +96,8 @@ else:
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+SUPABASE_S3_ACCESS_KEY = os.getenv("SUPABASE_S3_ACCESS_KEY", "").strip()
+SUPABASE_S3_SECRET_KEY = os.getenv("SUPABASE_S3_SECRET_KEY", "").strip()
 SUPABASE_STORAGE_BUCKET = os.getenv("SUPABASE_STORAGE_BUCKET", "case-evidence").strip()
 SUPABASE_STORAGE_PUBLIC = os.getenv("SUPABASE_STORAGE_PUBLIC", "True").lower() in ("1", "true", "yes")
 
@@ -130,7 +132,7 @@ staticfiles_backend = (
 
 _media_backend = (
     "apps.suspects.storage.SupabaseMediaStorage"
-    if SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY
+    if SUPABASE_URL and SUPABASE_S3_ACCESS_KEY and SUPABASE_S3_SECRET_KEY
     else "django.core.files.storage.FileSystemStorage"
 )
 

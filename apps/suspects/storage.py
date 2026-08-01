@@ -4,8 +4,8 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 class SupabaseMediaStorage(S3Boto3Storage):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault("access_key", settings.SUPABASE_SERVICE_ROLE_KEY)
-        kwargs.setdefault("secret_key", settings.SUPABASE_SERVICE_ROLE_KEY)
+        kwargs.setdefault("access_key", settings.SUPABASE_S3_ACCESS_KEY)
+        kwargs.setdefault("secret_key", settings.SUPABASE_S3_SECRET_KEY)
         kwargs.setdefault("bucket_name", settings.SUPABASE_STORAGE_BUCKET)
         kwargs.setdefault("endpoint_url", f"{settings.SUPABASE_URL}/storage/v1/s3")
         kwargs.setdefault("region_name", "auto")
