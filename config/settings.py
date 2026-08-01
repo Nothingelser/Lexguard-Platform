@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_htmx",
+    "storages",
     "apps.accounts",
     "apps.stations",
     "apps.cases",
@@ -95,7 +96,7 @@ else:
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
-SUPABASE_STORAGE_BUCKET = os.getenv("SUPABASE_STORAGE_BUCKET", "case-evidence").strip()
+SUPABASE_STORAGE_BUCKET = os.getenv("SUPABASE_STORAGE_BUCKET", "suspect-photos").strip()
 SUPABASE_STORAGE_PUBLIC = os.getenv("SUPABASE_STORAGE_PUBLIC", "True").lower() in ("1", "true", "yes")
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -126,8 +127,15 @@ staticfiles_backend = (
     if USE_MANIFEST_STATICFILES
     else "django.contrib.staticfiles.storage.StaticFilesStorage"
 )
+
+_media_backend = (
+    "apps.suspects.storage.SupabaseMediaStorage"
+    if SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY
+    else "django.core.files.storage.FileSystemStorage"
+)
+
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "default": {"BACKEND": _media_backend},
     "staticfiles": {"BACKEND": staticfiles_backend},
 }
 
