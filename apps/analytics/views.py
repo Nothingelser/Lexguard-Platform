@@ -169,6 +169,7 @@ def export_csv(request):
 
     performance = precinct_performance()
     cases_qs = Case.objects.select_related("station").order_by("-opened_at")
+    now_str = timezone.localtime(timezone.now()).strftime("%Y-%m-%d %H:%M:%S")
 
     response = HttpResponse(content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = 'attachment; filename="lexguard-regional-report.csv"'
@@ -178,18 +179,25 @@ def export_csv(request):
 
     writer = csv.writer(response)
 
+    # Executive Metadata Banner Header
+    writer.writerow(["COAST REGION POLICE COMMAND - REGIONAL EXECUTIVE INTELLIGENCE REPORT"])
+    writer.writerow([f"Generated On: {now_str} | Classification: CONFIDENTIAL / OFFICIAL POLICE USE ONLY"])
+    writer.writerow([])
+
     # Section 1: Precinct Performance Summary
     writer.writerow(["=== PRECINCT PERFORMANCE SUMMARY ==="])
     writer.writerow(["Station Code", "Station Name", "County", "Open Cases", "Closed Cases", "Closure Rate %", "Avg Resolution Days"])
     for row in performance:
+        rate_str = f"{row['closure_rate']:.1f}%" if row["closure_rate"] is not None else "0.0%"
+        days_str = f"{row['avg_resolution_days']:.1f}" if row["avg_resolution_days"] is not None else "N/A"
         writer.writerow([
             row["station"].code,
             row["station"].name,
             row["station"].county,
             row["open"],
             row["closed"],
-            row["closure_rate"],
-            row["avg_resolution_days"] or "",
+            rate_str,
+            days_str,
         ])
 
     writer.writerow([])
@@ -197,7 +205,7 @@ def export_csv(request):
 
     # Section 2: Regional Cases Registry (Live up-to-date data)
     writer.writerow(["=== REGIONAL CASES REGISTRY ==="])
-    writer.writerow(["Case Number", "Station Code", "Station Name", "County", "Crime Category", "Title", "Location", "Status", "Opened At", "Closed At"])
+    writer.writerow(["Case Number", "Station Code", "Station Name", "County", "Crime Category", "Case Title", "Incident Location", "Status", "Opened At", "Closed At"])
     for case in cases_qs:
         opened_str = timezone.localtime(case.opened_at).strftime("%Y-%m-%d %H:%M") if case.opened_at else ""
         closed_str = timezone.localtime(case.closed_at).strftime("%Y-%m-%d %H:%M") if case.closed_at else ""
