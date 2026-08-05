@@ -106,7 +106,7 @@ def precinct_performance():
         .annotate(
             total=Count("cases", distinct=True),
             closed=Count("cases", filter=Q(cases__status="closed"), distinct=True),
-            open_count=Count("cases", filter=~Q(cases__status="closed"), distinct=True),
+            open_count=Count("cases", filter=Q(cases__status__in=["open", "investigating"]), distinct=True),
             avg_resolution=Avg(
                 duration_expr,
                 filter=Q(cases__status="closed", cases__closed_at__isnull=False),

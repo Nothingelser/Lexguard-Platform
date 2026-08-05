@@ -165,12 +165,22 @@ def export_csv(request):
         return HttpResponseForbidden("Command access only.")
 
     import csv
+    from django.utils import timezone
 
     performance = precinct_performance()
-    response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = 'attachment; filename="lexguard-precinct-report.csv"'
+    cases_qs = Case.objects.select_related("station").order_by("-opened_at")
+
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = 'attachment; filename="lexguard-regional-report.csv"'
+    
+    # Write UTF-8 BOM for Microsoft Excel / CSV readers
+    response.write("\ufeff")
+
     writer = csv.writer(response)
-    writer.writerow(["Station Code", "Station Name", "County", "Open", "Closed", "Closure Rate %", "Avg Resolution Days"])
+
+    # Section 1: Precinct Performance Summary
+    writer.writerow(["=== PRECINCT PERFORMANCE SUMMARY ==="])
+    writer.writerow(["Station Code", "Station Name", "County", "Open Cases", "Closed Cases", "Closure Rate %", "Avg Resolution Days"])
     for row in performance:
         writer.writerow([
             row["station"].code,
@@ -181,6 +191,29 @@ def export_csv(request):
             row["closure_rate"],
             row["avg_resolution_days"] or "",
         ])
+
+    writer.writerow([])
+    writer.writerow([])
+
+    # Section 2: Regional Cases Registry (Live up-to-date data)
+    writer.writerow(["=== REGIONAL CASES REGISTRY ==="])
+    writer.writerow(["Case Number", "Station Code", "Station Name", "County", "Crime Category", "Title", "Location", "Status", "Opened At", "Closed At"])
+    for case in cases_qs:
+        opened_str = timezone.localtime(case.opened_at).strftime("%Y-%m-%d %H:%M") if case.opened_at else ""
+        closed_str = timezone.localtime(case.closed_at).strftime("%Y-%m-%d %H:%M") if case.closed_at else ""
+        writer.writerow([
+            case.case_number,
+            case.station.code,
+            case.station.name,
+            case.station.county,
+            case.get_crime_category_display() if hasattr(case, "get_crime_category_display") else case.crime_category,
+            case.title,
+            case.location,
+            case.get_status_display() if hasattr(case, "get_status_display") else case.status,
+            opened_str,
+            closed_str,
+        ])
+
     return response
 
 
