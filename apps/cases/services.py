@@ -25,9 +25,9 @@ def next_case_number(station):
         counter += 1
 
 
-def log_audit(user, action, entity, entity_id, detail=""):
+def log_audit(user, action, entity, entity_id, detail="", station=None):
     AuditLog.objects.create(
-        station=user.station,
+        station=station or user.station,
         user=user,
         action=action,
         entity=entity,

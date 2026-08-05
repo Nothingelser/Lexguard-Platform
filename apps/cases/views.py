@@ -90,7 +90,7 @@ def case_create(request):
             case.case_number = next_case_number(case.station)
             case.modus_operandi = mo_form.cleaned_mo_tags()
             case.save()
-            log_audit(request.user, "create", "case", case.pk, f"Registered case {case.case_number}")
+            log_audit(request.user, "create", "case", case.pk, f"Registered case {case.case_number}", station=case.station)
             messages.success(request, f"Case {case.case_number} created successfully.")
             return redirect("cases:detail", pk=case.pk)
 
